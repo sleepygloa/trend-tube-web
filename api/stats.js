@@ -8,24 +8,33 @@ const supabase = createClient(
 
 export default async function handler(req, res) {
   try {
-    // 쿼리 파라미터(URL에 담겨오는 조건)를 읽어옴
-    const { from, to, keyword } = req.query;
+    // categoryId 파라미터 추가
+    const { from, to, keyword, categoryId } = req.query;
 
-    // Supabase DB에 쿼리 요청
     let query = supabase.from('video_stats').select(`
         *,
-        videos ( title, channel_title )
+        videos ( title, channel_title, category_id )
     `);
 
-    // 조건이 있으면 쿼리에 추가
-    if (from) query = query.gte('collected_at', from); // from 날짜보다 크거나 같음
-    if (to) query = query.lte('collected_at', to);     // to 날짜보다 작거나 같음
 
-    // (keyword 검색 로직은 추후 추가)
+    if (from) query = query.gte('collected_at', from);
+    if (to) query = query.lte('collected_at', to);
+    if (keyword) query = query.ilike('videos.title', `%${keyword}%`);
+    
 
-    // 조회수(view_count)가 높은 순으로 정렬하고 상위 50개만 가져옴
+    // categoryId가 있으면, videos 테이블의 category_id로 필터링 (신규 추가)
+    if (categoryId) {
+      query = query.eq('videos.category_id', categoryId);
+    }
+
+    // keyword가 존재하면, videos 테이블의 title에서 해당 키워드를 포함하는 데이터만 조회
+    if (keyword) {
+      // ilike는 대소문자를 구분하지 않는 검색을 의미
+      query = query.ilike('videos.title', `%${keyword}%`);
+    }
+
     query = query.order('view_count', { ascending: false }).limit(50);
-
+    
     const { data, error } = await query;
 
     if (error) {

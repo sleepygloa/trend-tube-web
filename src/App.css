@@ -36,3 +36,73 @@
     transform: rotate(360deg);
   }
 }
+.video-item {
+  cursor: pointer; /* 마우스 커서를 손가락 모양으로 변경 */
+  transition: transform 0.2s ease-in-out;
+}
+
+.video-item:hover {
+  transform: scale(1.03); /* 마우스를 올리면 살짝 커지는 효과 */
+  background-color: #3f4451;
+}
+
+/* --- SearchBar 스타일 --- */
+.search-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.date-picker-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+.react-datepicker-wrapper input {
+  border: none;
+  width: 100px;
+  color: #282c34;
+}
+
+/* --- Modal 스타일 --- */
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+  background: #3e4451;
+  padding: 30px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  color: white;
+  border: 1px solid #61dafb;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.close-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #61dafb;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  float: right;
+}
+.trending-button {
+  background-color: #ff4757;
+}
