@@ -106,3 +106,49 @@
 .trending-button {
   background-color: #ff4757;
 }
+/* --- Video Grid 스타일 --- */
+
+.video-list {
+  display: grid;
+  /* 화면 크기에 따라 250px 너비의 카드를 최대한 채우고, 나머지는 균등 분배 */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px; /* 카드 사이의 간격 */
+  padding: 20px;
+}
+
+.video-item {
+  /* 기존 스타일을 덮어쓰고 그리드 아이템에 맞게 수정 */
+  display: flex;
+  flex-direction: column; /* 아이템 내부를 세로로 정렬 */
+  background-color: #3e4451;
+  border-radius: 8px;
+  overflow: hidden; /* 이미지가 카드를 벗어나지 않도록 함 */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.video-item img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9; /* 16:9 비율 유지 */
+  object-fit: cover; /* 비율을 유지하며 꽉 채움 */
+}
+
+.video-info {
+  padding: 15px;
+  /* 자식 요소들이 공간을 차지하도록 함 */
+  flex-grow: 1; 
+  display: flex;
+  flex-direction: column;
+}
+
+.video-info h4 {
+  font-size: 1rem;
+  margin: 0 0 10px 0;
+  flex-grow: 1; /* 제목이 공간을 최대한 차지하게 하여 카드 높이를 맞춤 */
+}
+
+.video-info p {
+  font-size: 0.8rem;
+  margin: 2px 0;
+  color: #ccc;
+}
