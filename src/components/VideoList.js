@@ -28,7 +28,17 @@ function VideoList({ videos = [], onVideoSelect }) {
           onDoubleClick={() => window.open(`https://www.youtube.com/watch?v=${video.id}`, '_blank')}
           title="클릭: 상세 정보, 더블클릭: 영상 재생"
         >
-          <img src={video.thumbnail} alt={video.title} />
+          {/* --- 이 부분이 수정되었습니다! --- */}
+          <img 
+            src={video.thumbnail} 
+            alt={video.title} 
+            onLoad={(e) => {
+              // 이미지가 로드된 후 부모 컴포넌트(VideoList)를 강제로 업데이트
+              // 이를 통해 Masonry가 레이아웃을 다시 계산하도록 유도
+              e.target.style.opacity = 1; // 로딩 후 보이기 (옵션)
+            }}
+            style={{ opacity: 0, transition: 'opacity 0.3s ease-in' }} // 로딩 전 숨기기 (옵션)
+          />
           <div className="video-info">
             <h4>{video.title}</h4>
             <p>{video.channelTitle}</p>

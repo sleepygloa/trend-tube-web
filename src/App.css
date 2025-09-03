@@ -301,17 +301,67 @@ main p {
 /* ==========================================================================
    동영상 그리드 및 모달 스타일 (Video Grid & Modal Styles)
    ========================================================================== */
+   
+/* --- 기존 .my-masonry-grid 관련 CSS는 그대로 둡니다 --- */
 .my-masonry-grid {
   display: -webkit-box; /* Not needed if autoprefixing */
   display: -ms-flexbox; /* Not needed if autoprefixing */
   display: flex;
   margin-left: -20px; /* gutter size offset */
   width: auto;
-  padding: 20px;
+  padding: 20px; /* main 태그의 padding을 여기서 관리하도록 변경 */
 }
 .my-masonry-grid_column {
   padding-left: 20px; /* gutter size */
   background-clip: padding-box;
+}
+
+/* --- .video-item 스타일 수정 --- */
+.video-item {
+  background-color: #333;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  margin-bottom: 20px; /* Masonry가 아이템 사이의 수직 간격을 처리하도록 함 */
+  /* height: auto;  Masonry를 사용하므로 고정된 height를 제거합니다. */
+  /* width: 100%; Masonry 칼럼 내에서 100%를 차지하도록 함 */
+}
+
+.video-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.video-item img {
+  width: 100%;
+  height: auto; /* 이미지 높이가 내용에 맞춰 자동으로 조절되도록 */
+  display: block;
+}
+
+.video-item .video-info {
+  padding: 10px 15px;
+  color: white;
+}
+
+.video-item h4 {
+  font-size: 1rem;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  line-height: 1.4;
+  height: 2.8em; /* 두 줄까지 표시하고 넘치면 ... 처리 (제목 길이에 따라 유동적 높이 가능) */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.video-item p {
+  font-size: 0.85rem;
+  color: #ccc;
+  margin-bottom: 3px;
 }
 
 .modal {
