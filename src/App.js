@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
-// import SearchBar from './components/SearchBar'; // 이제 SearchBar는 FilterModal 내부에서만 사용합니다.
 import VideoList from './components/VideoList';
 import VideoDetailModal from './components/VideoDetailModal';
-import SubscriptionForm from './components/SubscriptionForm';
 import FilterModal from './components/FilterModal';
 
 function App() {
@@ -14,38 +12,38 @@ function App() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [isSplashVisible, setIsSplashVisible] = useState(true);
-
-  // 필터 모달의 열림/닫힘 상태를 관리하는 새로운 state
   const [filterModalIsOpen, setFilterModalIsOpen] = useState(false);
 
   useEffect(() => {
-    // 3초 후 스플래시 화면 숨김
     const timer = setTimeout(() => {
       setIsSplashVisible(false);
-    }, 3000);
+    }, 2500);
     return () => clearTimeout(timer);
   }, []);
 
-  const handleSearch = async ({ startDate, endDate, keyword, category }) => {
+  // API 응답 데이터를 프론트엔드에서 사용하기 쉬운 형태로 변환하는 함수
+  const formatVideoData = (video) => ({
+    id: video.id.videoId || video.id,
+    title: video.snippet.title,
+    channelTitle: video.snippet.channelTitle,
+    thumbnail: video.snippet.thumbnails.medium.url,
+    publishedAt: video.snippet.publishedAt,
+    viewCount: video.statistics?.viewCount, // statistics가 없을 수 있으므로 optional chaining 사용
+    likeCount: video.statistics?.likeCount,
+  });
+
+  const handleSearch = async (filters) => {
     setLoading(true);
     setError(null);
+    setVideos([]);
     try {
-      const formattedStartDate = startDate.toISOString().split('T')[0];
-      const formattedEndDate = endDate.toISOString().split('T')[0];
-
-      const response = await axios.get('/api/search', {
-        params: {
-          startDate: formattedStartDate,
-          endDate: formattedEndDate,
-          keyword,
-          category
-        }
-      });
-      setVideos(response.data.items || []);
+      // '/api/search'는 아직 없으므로, 임시로 '/api/trending'을 호출하도록 수정
+      // 나중에 '/api/search'를 만들면 이 부분만 교체하면 됩니다.
+      const response = await axios.get('/api/trending', { params: filters });
+      setVideos((response.data || []).map(formatVideoData));
     } catch (err) {
       setError('검색 데이터를 불러오는 데 실패했습니다.');
       console.error('Search API error:', err);
-      setVideos([]);
     } finally {
       setLoading(false);
     }
@@ -54,13 +52,14 @@ function App() {
   const handleFetchTrending = async () => {
     setLoading(true);
     setError(null);
+    setVideos([]);
     try {
       const response = await axios.get('/api/trending');
-      setVideos(response.data.items || []);
+      // response.data가 배열인지 확인하고, 아니면 빈 배열로 처리
+      setVideos((response.data || []).map(formatVideoData));
     } catch (err) {
       setError('실시간 인기 동영상을 불러오는 데 실패했습니다.');
       console.error('Trending API error:', err);
-      setVideos([]);
     } finally {
       setLoading(false);
     }
@@ -81,24 +80,19 @@ function App() {
       <header className={`App-header ${isSplashVisible ? 'splash' : ''}`}>
         <h1>🚀 TrendTube</h1>
         {isSplashVisible && <p>기간별 유튜브 트렌드를 분석하고 구독하세요.</p>}
-        
         {!isSplashVisible && (
-          <>
-            {/* 웹/모바일 모두 '필터' 버튼만 표시 */}
-            <button 
-              className="filter-button" 
-              onClick={() => setFilterModalIsOpen(true)}
-              disabled={loading}
-            >
-              필터
-            </button>
-          </>
+          <button 
+            className="filter-button" 
+            onClick={() => setFilterModalIsOpen(true)}
+            disabled={loading}
+          >
+            필터
+          </button>
         )}
       </header>
       
       {!isSplashVisible && (
         <main>
-          <SubscriptionForm /> 
           {error && <p className="error-message">{error}</p>}
           {loading ? <p>데이터를 불러오는 중입니다...</p> : 
             <VideoList videos={videos} onVideoSelect={openModal} />
@@ -109,20 +103,19 @@ function App() {
       <VideoDetailModal
         modalIsOpen={modalIsOpen}
         closeModal={closeModal}
-        videoStat={selectedVideo}
+        videoData={selectedVideo} // props 이름을 videoStat -> videoData로 변경
       />
 
-      {/* 필터 모달 */}
       <FilterModal
         modalIsOpen={filterModalIsOpen}
         closeModal={() => setFilterModalIsOpen(false)}
         onSearch={(filters) => {
           handleSearch(filters);
-          setFilterModalIsOpen(false); // 검색 후 모달 닫기
+          setFilterModalIsOpen(false);
         }}
         onFetchTrending={() => {
           handleFetchTrending();
-          setFilterModalIsOpen(false); // 인급동 조회 후 모달 닫기
+          setFilterModalIsOpen(false);
         }}
         isLoading={loading}
       />
