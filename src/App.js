@@ -41,7 +41,7 @@ function App() {
           category
         }
       });
-      setVideos(response.data.items);
+      setVideos(response.data.items || []);
     } catch (err) {
       setError('검색 데이터를 불러오는 데 실패했습니다.');
       console.error('Search API error:', err);
@@ -56,7 +56,7 @@ function App() {
     setError(null);
     try {
       const response = await axios.get('/api/trending');
-      setVideos(response.data.items);
+      setVideos(response.data.items || []);
     } catch (err) {
       setError('실시간 인기 동영상을 불러오는 데 실패했습니다.');
       console.error('Trending API error:', err);

@@ -1,6 +1,10 @@
 import React from 'react';
 
-function VideoList({ videos, onVideoSelect }) { 
+function VideoList({ videos = [], onVideoSelect }) { 
+  if (videos.length === 0) {
+    return <p>검색 결과가 없습니다. '검색' 버튼을 눌러 최신 데이터를 확인하세요.</p>;
+  }
+
   const handleVideoClick = (videoStat) => {
     onVideoSelect(videoStat); // 부모(App.js)의 openModal 함수를 실행
     // 임시로 alert 창을 띄워 상세 정보를 보여줍니다.
@@ -18,26 +22,22 @@ function VideoList({ videos, onVideoSelect }) {
     window.open(`https://www.youtube.com/watch?v=${videoStat.video_id}`, '_blank');
   };
 
-  if (videos.length === 0) {
-    return <p>검색 결과가 없습니다. '검색' 버튼을 눌러 최신 데이터를 확인하세요.</p>;
-  }
 
   return (
     <div className="video-list">
-      {videos.map((videoStat) => (
+      {videos.map((video) => ( // videoStat -> video로 변경
         <div 
-          key={videoStat.id} 
+          key={video.id.videoId || video.id} // trending API와 search API의 id 구조가 다르므로 둘 다 처리
           className="video-item"
-          // 클릭 및 더블클릭 이벤트 핸들러 추가
-          onClick={() => handleVideoClick(videoStat)}
-          onDoubleClick={() => handleVideoDoubleClick(videoStat)}
-          title="클릭: 상세 정보, 더블클릭: 영상 재생" // 마우스를 올리면 팁이 보임
+          onClick={() => onVideoSelect(video)}
+          title="클릭: 상세 정보"
         >
-          <img src={`https://i.ytimg.com/vi/${videoStat.video_id}/mqdefault.jpg`} alt={videoStat.videos.title} />
+          <img src={video.snippet.thumbnails.medium.url} alt={video.snippet.title} />
           <div className="video-info">
-            <h4>{videoStat.videos.title}</h4>
-            <p>{videoStat.videos.channel_title}</p>
-            <p>조회수: {Number(videoStat.view_count).toLocaleString()}회</p>
+            <h4>{video.snippet.title}</h4>
+            <p>{video.snippet.channelTitle}</p>
+            {/* search API는 statistics가 없으므로 조건부 렌더링 */}
+            {video.statistics && <p>조회수: {Number(video.statistics.viewCount).toLocaleString()}회</p>}
           </div>
         </div>
       ))}
