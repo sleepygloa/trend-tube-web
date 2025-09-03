@@ -3,7 +3,7 @@ import { google } from 'googleapis';
 // YouTube API 클라이언트 초기화
 const youtube = google.youtube({
   version: 'v3',
-  auth: process.env._YOUTUBE_API_KEY,
+  auth: process.env.YOUTUBE_API_KEY,
 });
 
 export default async function handler(req, res) {

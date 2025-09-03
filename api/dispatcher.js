@@ -2,8 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 import sgMail from '@sendgrid/mail';
 
 const supabase = createClient(
-  process.env._SUPABASE_URL,
-  process.env._SUPABASE_SERVICE_KEY
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY
 );
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
