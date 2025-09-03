@@ -1,5 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
+import ReactPlayer from 'react-player/youtube';
 
 Modal.setAppElement('#root');
 
@@ -10,17 +11,22 @@ function VideoDetailModal({ modalIsOpen, closeModal, videoData }) {
     <Modal
       isOpen={modalIsOpen}
       onRequestClose={closeModal}
-      contentLabel="Video Details"
-      className="modal"
+      contentLabel="Video Player"
+      className="modal video-player-modal" // 비디오용 클래스 추가
       overlayClassName="overlay"
     >
-      <h2>{videoData.title}</h2>
-      <p><strong>채널:</strong> {videoData.channelTitle}</p>
-      <p><strong>게시일:</strong> {new Date(videoData.publishedAt).toLocaleDateString()}</p>
-      <hr />
-      {videoData.viewCount && <p><strong>조회수:</strong> {Number(videoData.viewCount).toLocaleString()}회</p>}
-      {videoData.likeCount && <p><strong>좋아요 수:</strong> {Number(videoData.likeCount).toLocaleString()}회</p>}
-      <button onClick={closeModal} className="close-button">닫기</button>
+      {/* 닫기 버튼을 모달 바깥쪽에 배치 */}
+      <button onClick={closeModal} className="close-button-player">X</button>
+      <div className="player-wrapper">
+        <ReactPlayer
+          className="react-player-main"
+          url={`https://www.youtube.com/watch?v=${videoData.id}`}
+          width="100%"
+          height="100%"
+          playing={true}   // 모달이 열리면 바로 재생
+          controls={true}  // 재생/정지 등 컨트롤 바 표시
+        />
+      </div>
     </Modal>
   );
 }

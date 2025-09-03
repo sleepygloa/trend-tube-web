@@ -20,31 +20,9 @@ function VideoList({ videos = [], onVideoSelect }) {
       className="my-masonry-grid"
       columnClassName="my-masonry-grid_column"
     >
+      {/* 각 비디오 데이터를 VideoItem 컴포넌트에 전달 */}
       {videos.map((video) => (
-        <div 
-          key={video.id + Math.random()} // 중복 방지를 위해 key 강화
-          className="video-item"
-          onClick={() => onVideoSelect(video)}
-          onDoubleClick={() => window.open(`https://www.youtube.com/watch?v=${video.id}`, '_blank')}
-          title="클릭: 상세 정보, 더블클릭: 영상 재생"
-        >
-          {/* --- 이 부분이 수정되었습니다! --- */}
-          <img 
-            src={video.thumbnail} 
-            alt={video.title} 
-            onLoad={(e) => {
-              // 이미지가 로드된 후 부모 컴포넌트(VideoList)를 강제로 업데이트
-              // 이를 통해 Masonry가 레이아웃을 다시 계산하도록 유도
-              e.target.style.opacity = 1; // 로딩 후 보이기 (옵션)
-            }}
-            style={{ opacity: 0, transition: 'opacity 0.3s ease-in' }} // 로딩 전 숨기기 (옵션)
-          />
-          <div className="video-info">
-            <h4>{video.title}</h4>
-            <p>{video.channelTitle}</p>
-            {video.viewCount && <p>조회수: {Number(video.viewCount).toLocaleString()}회</p>}
-          </div>
-        </div>
+        <VideoItem key={video.id + Math.random()} video={video} onVideoSelect={onVideoSelect} />
       ))}
     </Masonry>
   );

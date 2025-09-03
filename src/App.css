@@ -466,3 +466,59 @@ main p {
 .load-more-button:hover {
   background-color: #0056b3;
 }
+
+/* --- VideoItem 미리보기 플레이어 스타일 --- */
+.video-player-wrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: #000;
+  overflow: hidden;
+  position: relative;
+}
+
+.video-player-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ReactPlayer가 wrapper 내부에 꽉 차도록 설정 */
+.video-player-wrapper .react-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* --- 비디오 재생 모달 스타일 --- */
+.video-player-modal {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  width: 90vw; /* 화면 너비의 90% */
+  max-width: 1280px;
+  height: auto;
+  overflow: visible; /* 닫기 버튼이 보일 수 있도록 */
+}
+
+.player-wrapper {
+  position: relative;
+  padding-top: 56.25%; /* 16:9 비율 유지를 위한 트릭 */
+}
+
+.react-player-main {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.close-button-player {
+  position: absolute;
+  top: -45px; /* 비디오 플레이어 위쪽으로 이동 */
+  right: 0;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: white;
+  cursor: pointer;
+  text-shadow: 0 0 5px black;
+}
