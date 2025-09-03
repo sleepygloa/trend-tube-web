@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 .App {
   text-align: center;
 }
@@ -13,19 +17,59 @@
   }
 }
 
+/* 기존 .App-header 스타일을 아래 내용으로 교체합니다. */
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  background-color: #20232A;
+  padding: 10px 20px; /* 상하좌우 여백 조정 */
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: space-between; /* 양쪽 끝으로 요소를 밀어냄 */
+  flex-wrap: wrap; /* 화면이 좁아지면 줄바꿈 허용 */
+  gap: 20px; /* 요소 사이의 간격 */
+  transition: all 0.8s ease-in-out; 
 }
 
-.App-link {
-  color: #61dafb;
+/* 스플래시 상태일 때의 스타일 (기존 스타일을 덮어씀) */
+.App-header.splash {
+  height: 100vh; /* 화면 전체 높이 */
+  justify-content: center; /* 가로 중앙 정렬 */
+  flex-direction: column; /* 컨텐츠를 세로로 쌓음 */
+  padding: 20px;
+  box-shadow: none; /* 스플래시일 때는 그림자 없음 */
+}
+
+/* 헤더 안의 h1 태그 스타일 */
+.App-header h1 {
+  font-size: 1.5rem; /* 헤더 바 상태일 때의 글자 크기 */
+  margin: 0;
+  transition: font-size 0.8s ease-in-out; /* 글자 크기 변경 애니메이션 */
+  color: white; /* <-- 이 줄을 추가하세요 */
+}
+
+/* 스플래시 상태일 때의 h1 태그 스타일 */
+.App-header.splash h1 {
+  font-size: 3rem; /* 스플래시 상태일 때의 글자 크기 */
+}
+
+/* 스플래시 상태일 때의 p 태그 스타일 */
+.App-header.splash p {
+  font-size: 1.2rem;
+  color: #ccc;
+  margin-top: 10px;
+}
+
+/* 메인 콘텐츠를 부드럽게 나타나게 하는 효과
+  초기에는 숨겨져 있다가, App div에 'splash-active' 클래스가 사라지면 나타남
+*/
+main {
+  opacity: 0;
+  transition: opacity 0.5s ease-in;
+}
+
+.App:not(.splash-active) main {
+  opacity: 1;
 }
 
 @keyframes App-logo-spin {
@@ -49,10 +93,9 @@
 /* --- SearchBar 스타일 --- */
 .search-bar {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 10px; /* 검색창 내부 요소들 사이의 간격 */
+  flex-wrap: wrap; /* 화면이 좁아지면 줄바꿈 허용 */
 }
 .date-picker-container {
   display: flex;
@@ -151,4 +194,49 @@
   font-size: 0.8rem;
   margin: 2px 0;
   color: #ccc;
+}
+
+/* --- Header Bar 최종 스타일 --- */
+.App-header {
+  background-color: #20232A;
+  padding: 10px 20px; /* 상하좌우 여백 조정 */
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: space-between; /* 양쪽 끝으로 요소를 밀어냄 */
+  flex-wrap: wrap; /* 화면이 좁아지면 줄바꿈 허용 */
+  gap: 20px; /* 요소 사이의 간격 */
+  transition: all 0.8s ease-in-out; 
+}
+
+/* --- SearchBar 최종 스타일 --- */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 검색창 내부 요소들 사이의 간격 */
+  flex-wrap: wrap; /* 화면이 좁아지면 줄바꿈 허용 */
+}
+
+/* --- 반응형 디자인 (모바일 화면) --- */
+/* 화면 너비가 768px보다 작아질 때 아래 스타일을 적용 */
+@media (max-width: 768px) {
+  .App-header {
+    /* 제목과 검색바를 세로로 쌓음 */
+    flex-direction: column;
+    align-items: flex-start; /* 왼쪽 정렬 */
+  }
+
+  .search-bar {
+    /* 검색바가 헤더의 전체 너비를 차지하도록 함 */
+    width: 100%;
+  }
+
+  .search-bar .date-picker-container,
+  .search-bar select,
+  .search-bar input {
+    /* 모바일에서는 검색 요소들이 더 넓게 표시되도록 함 */
+    width: 100%;
+    margin-bottom: 5px;
+  }
 }
