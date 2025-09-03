@@ -1,5 +1,6 @@
 import React from 'react';
 import Masonry from 'react-masonry-css';
+import VideoItem from './VideoItem'; // 새로 만든 VideoItem을 import
 
 function VideoList({ videos = [], onVideoSelect }) { 
   if (videos.length === 0) {

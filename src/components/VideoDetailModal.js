@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
-import ReactPlayer from 'react-player/youtube';
+import ReactPlayer from 'react-player';
 
 Modal.setAppElement('#root');
 
