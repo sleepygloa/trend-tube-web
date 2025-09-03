@@ -1,11 +1,413 @@
+/* ==========================================================================
+   글로벌 및 기본 스타일 (Global & Base Styles)
+   ========================================================================== */
 * {
   box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8f9fa;
+  color: #212529;
 }
 
 .App {
   text-align: center;
 }
 
+/* ==========================================================================
+   헤더 및 스플래시 스타일 (Header & Splash Styles)
+   ========================================================================== */
+.App-header {
+  background-color: #20232A;
+  padding: 10px 20px;
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  transition: all 0.8s ease-in-out;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.App-header.splash {
+  height: 100vh;
+  justify-content: center;
+  flex-direction: column;
+  box-shadow: none;
+  position: fixed;
+}
+
+.App-header h1 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: white;
+  transition: font-size 0.8s ease-in-out;
+}
+
+.App-header.splash h1 {
+  font-size: 3rem;
+}
+
+.App-header.splash p {
+  font-size: 1.2rem;
+  color: #ccc;
+  margin-top: 10px;
+}
+
+/* ==========================================================================
+   메인 콘텐츠 스타일 (Main Content Styles)
+   ========================================================================== */
+main {
+  background-color: #ffffff;
+  color: #212529;
+  opacity: 0;
+  transition: opacity 0.5s ease-in;
+}
+
+.App:not(.splash-active) main {
+  opacity: 1;
+}
+
+main p {
+  color: #555;
+}
+
+.error-message {
+  color: #e03131;
+  padding: 20px;
+}
+
+.subscription-form-container {
+  padding: 30px;
+  background-color: #f1f3f5;
+  margin: 20px auto;
+  border-radius: 8px;
+  max-width: 800px;
+}
+
+.subscription-form-container h3 {
+  margin-top: 0;
+  color: #343a40;
+}
+
+.subscription-form-container form {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.subscription-form-container input {
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  width: 250px;
+}
+
+/* ==========================================================================
+   검색 바 및 날짜 프리셋 버튼 스타일 (Search & Date Preset Styles)
+   ========================================================================== */
+
+.filter-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+   
+/* 필터 버튼 (웹/모바일 헤더에 항상 표시) */
+.filter-button {
+  height: 38px;
+  padding: 0 20px;
+  border: 1px solid #17a2b8; /* 기간별 검색 버튼과 동일한 색상 */
+  border-radius: 5px;
+  background-color: #17a2b8;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.filter-button:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+/* SearchBar 컴포넌트 전체에 대한 기본 스타일 (모달 내부에서 사용됨) */
+.search-bar {
+  display: flex;
+  flex-direction: column; /* 기본적으로 세로로 쌓이도록 */
+  align-items: stretch; /* 너비를 꽉 채우도록 */
+  gap: 15px;
+}
+
+/* SearchBar 내부 input, select, button 기본 스타일 */
+.search-bar input[type="text"],
+.search-bar select,
+.search-bar button,
+.react-datepicker-wrapper input {
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid #495057; /* 통일된 테두리 색상 */
+  border-radius: 5px;
+  background-color: white; /* 통일된 배경색 */
+  color: #495057; /* 통일된 글자색 */
+  font-size: 0.95rem;
+  width: 100%; /* 모달 안에서 항상 100% 너비 */
+}
+
+/* DatePicker input만 너비 조정 (모달 안에서도 100%를 따르지만, 여기서는 컨테이너에 의해 조정됨) */
+.react-datepicker-wrapper input {
+  width: auto; /* date-picker-container의 flex 아이템으로 동작 */
+}
+
+/* DatePicker 컨테이너 내부의 날짜 input */
+.search-bar .date-picker-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  /* 모달 내부에서 날짜 선택기가 전체 너비를 사용하도록 */
+  width: 100%; 
+  justify-content: space-between; /* ~ 기호 사이를 넓힘 */
+}
+
+.search-bar .date-picker-container .react-datepicker-wrapper {
+  flex-grow: 1; /* 날짜 입력 필드가 공간을 채우도록 */
+}
+
+.search-bar .date-picker-container span {
+  color: #ccc; /* ~ 기호 색상 */
+}
+
+.search-bar select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='18px' height='18px'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 14px;
+  padding-right: 30px; /* 화살표가 텍스트를 가리지 않도록 */
+}
+
+.search-bar button {
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.search-bar button:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.search-bar button[type="submit"] {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+  color: white;
+}
+
+.trending-button,
+.subscription-form-container button {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 날짜 프리셋 버튼 (모달 내부에서 사용됨) */
+.date-preset-buttons {
+  display: flex;
+  justify-content: center; /* 모달 안에서 중앙 정렬 */
+  gap: 10px;
+  margin-top: 15px; /* 검색 버튼들과 간격 */
+  flex-wrap: wrap; /* 모바일에서 줄바꿈 허용 */
+}
+
+.date-preset-buttons button {
+  background-color: #6c757d; /* 회색 계열 */
+  border: 1px solid #6c757d;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: auto; /* 개별 버튼 너비는 내용에 맞게 */
+}
+
+.date-preset-buttons button:hover {
+  background-color: #5a6268;
+}
+
+/* ==========================================================================
+   DatePicker 커스텀 스타일 (DatePicker Custom Styles)
+   ========================================================================== */
+.react-datepicker-popper {
+  z-index: 101;
+}
+.react-datepicker {
+  font-family: inherit;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: #212529; /* 달력 숫자 및 요일 글자색 */
+}
+.react-datepicker__header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  padding-top: 10px; /* 상단 여백 추가 */
+}
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  color: #212529; /* 현재 월과 요일 이름 색상 */
+}
+.react-datepicker__day--today {
+  font-weight: bold;
+  background-color: #e9ecef;
+}
+.react-datepicker__day--selected,
+.react-datepicker__day--in-range,
+.react-datepicker__day--in-selecting-range {
+  background-color: #007bff;
+  color: white;
+  border-radius: 0.3rem;
+}
+.react-datepicker__day--keyboard-selected {
+  background-color: #dbeafe;
+}
+.react-datepicker__navigation {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  height: 32px;
+  top: 7px;
+}
+.react-datepicker__navigation-icon::before {
+  border-color: #495057;
+  border-width: 2px 2px 0 0;
+}
+
+/* ==========================================================================
+   동영상 그리드 및 모달 스타일 (Video Grid & Modal Styles)
+   ========================================================================== */
+.video-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+.video-item {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.video-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+.video-item img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-bottom: 1px solid #e9ecef;
+}
+.video-info {
+  padding: 15px;
+  flex-grow: 1;
+}
+.video-info h4 {
+  font-size: 1rem;
+  margin: 0 0 10px 0;
+  color: #212529;
+}
+.video-info p {
+  font-size: 0.85rem;
+  margin: 2px 0;
+  color: #6c757d;
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  color: #212529;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 200;
+}
+.close-button { /* 구독 폼 닫기 버튼 */
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 10px 20px; /* 버튼 패딩 추가 */
+  border-radius: 5px; /* 버튼 모서리 둥글게 */
+}
+.close-button-modal { /* 필터 모달 닫기 버튼 (X 아이콘) */
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6c757d; /* 아이콘 색상 조정 */
+  transition: color 0.2s;
+}
+.close-button-modal:hover {
+  color: #343a40;
+}
+
+/* ==========================================================================
+   반응형 디자인 (Responsive Design)
+   ========================================================================== */
+
+/* 웹/모바일 모두 '필터' 버튼만 보이도록 데스크톱용 검색 바 숨김 */
+.desktop-search-bar {
+  display: none;
+}
+
+/* 필터 버튼은 항상 보임 */
+.filter-button {
+  display: block; /* 항상 블록 요소로 표시 */
+}
+
+/* @media (max-width: 768px) { ... }는 더 이상 필요 없습니다.
+   이제 웹/모바일 모두 동일하게 '필터' 버튼이 보이고 모달이 열립니다. */
+
+
+/* ==========================================================================
+   Create React App 기본 스타일 (Default CRA Styles) - 선택사항
+   ========================================================================== */
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -17,226 +419,11 @@
   }
 }
 
-/* 기존 .App-header 스타일을 아래 내용으로 교체합니다. */
-.App-header {
-  background-color: #20232A;
-  padding: 10px 20px; /* 상하좌우 여백 조정 */
-  width: 100%;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  display: flex;
-  align-items: center; /* 세로 중앙 정렬 */
-  justify-content: space-between; /* 양쪽 끝으로 요소를 밀어냄 */
-  flex-wrap: wrap; /* 화면이 좁아지면 줄바꿈 허용 */
-  gap: 20px; /* 요소 사이의 간격 */
-  transition: all 0.8s ease-in-out; 
-}
-
-/* 스플래시 상태일 때의 스타일 (기존 스타일을 덮어씀) */
-.App-header.splash {
-  height: 100vh; /* 화면 전체 높이 */
-  justify-content: center; /* 가로 중앙 정렬 */
-  flex-direction: column; /* 컨텐츠를 세로로 쌓음 */
-  padding: 20px;
-  box-shadow: none; /* 스플래시일 때는 그림자 없음 */
-}
-
-/* 헤더 안의 h1 태그 스타일 */
-.App-header h1 {
-  font-size: 1.5rem; /* 헤더 바 상태일 때의 글자 크기 */
-  margin: 0;
-  transition: font-size 0.8s ease-in-out; /* 글자 크기 변경 애니메이션 */
-  color: white; /* <-- 이 줄을 추가하세요 */
-}
-
-/* 스플래시 상태일 때의 h1 태그 스타일 */
-.App-header.splash h1 {
-  font-size: 3rem; /* 스플래시 상태일 때의 글자 크기 */
-}
-
-/* 스플래시 상태일 때의 p 태그 스타일 */
-.App-header.splash p {
-  font-size: 1.2rem;
-  color: #ccc;
-  margin-top: 10px;
-}
-
-/* 메인 콘텐츠를 부드럽게 나타나게 하는 효과
-  초기에는 숨겨져 있다가, App div에 'splash-active' 클래스가 사라지면 나타남
-*/
-main {
-  opacity: 0;
-  transition: opacity 0.5s ease-in;
-}
-
-.App:not(.splash-active) main {
-  opacity: 1;
-}
-
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
-  }
-}
-.video-item {
-  cursor: pointer; /* 마우스 커서를 손가락 모양으로 변경 */
-  transition: transform 0.2s ease-in-out;
-}
-
-.video-item:hover {
-  transform: scale(1.03); /* 마우스를 올리면 살짝 커지는 효과 */
-  background-color: #3f4451;
-}
-
-/* --- SearchBar 스타일 --- */
-.search-bar {
-  display: flex;
-  align-items: center;
-  gap: 10px; /* 검색창 내부 요소들 사이의 간격 */
-  flex-wrap: wrap; /* 화면이 좁아지면 줄바꿈 허용 */
-}
-.date-picker-container {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background-color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-.react-datepicker-wrapper input {
-  border: none;
-  width: 100px;
-  color: #282c34;
-}
-
-/* --- Modal 스타일 --- */
-.modal {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  right: auto;
-  bottom: auto;
-  transform: translate(-50%, -50%);
-  background: #3e4451;
-  padding: 30px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  color: white;
-  border: 1px solid #61dafb;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.75);
-}
-
-.close-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #61dafb;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  float: right;
-}
-.trending-button {
-  background-color: #ff4757;
-}
-/* --- Video Grid 스타일 --- */
-
-.video-list {
-  display: grid;
-  /* 화면 크기에 따라 250px 너비의 카드를 최대한 채우고, 나머지는 균등 분배 */
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px; /* 카드 사이의 간격 */
-  padding: 20px;
-}
-
-.video-item {
-  /* 기존 스타일을 덮어쓰고 그리드 아이템에 맞게 수정 */
-  display: flex;
-  flex-direction: column; /* 아이템 내부를 세로로 정렬 */
-  background-color: #3e4451;
-  border-radius: 8px;
-  overflow: hidden; /* 이미지가 카드를 벗어나지 않도록 함 */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-.video-item img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9; /* 16:9 비율 유지 */
-  object-fit: cover; /* 비율을 유지하며 꽉 채움 */
-}
-
-.video-info {
-  padding: 15px;
-  /* 자식 요소들이 공간을 차지하도록 함 */
-  flex-grow: 1; 
-  display: flex;
-  flex-direction: column;
-}
-
-.video-info h4 {
-  font-size: 1rem;
-  margin: 0 0 10px 0;
-  flex-grow: 1; /* 제목이 공간을 최대한 차지하게 하여 카드 높이를 맞춤 */
-}
-
-.video-info p {
-  font-size: 0.8rem;
-  margin: 2px 0;
-  color: #ccc;
-}
-
-/* --- Header Bar 최종 스타일 --- */
-.App-header {
-  background-color: #20232A;
-  padding: 10px 20px; /* 상하좌우 여백 조정 */
-  width: 100%;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  display: flex;
-  align-items: center; /* 세로 중앙 정렬 */
-  justify-content: space-between; /* 양쪽 끝으로 요소를 밀어냄 */
-  flex-wrap: wrap; /* 화면이 좁아지면 줄바꿈 허용 */
-  gap: 20px; /* 요소 사이의 간격 */
-  transition: all 0.8s ease-in-out; 
-}
-
-/* --- SearchBar 최종 스타일 --- */
-.search-bar {
-  display: flex;
-  align-items: center;
-  gap: 10px; /* 검색창 내부 요소들 사이의 간격 */
-  flex-wrap: wrap; /* 화면이 좁아지면 줄바꿈 허용 */
-}
-
-/* --- 반응형 디자인 (모바일 화면) --- */
-/* 화면 너비가 768px보다 작아질 때 아래 스타일을 적용 */
-@media (max-width: 768px) {
-  .App-header {
-    /* 제목과 검색바를 세로로 쌓음 */
-    flex-direction: column;
-    align-items: flex-start; /* 왼쪽 정렬 */
-  }
-
-  .search-bar {
-    /* 검색바가 헤더의 전체 너비를 차지하도록 함 */
-    width: 100%;
-  }
-
-  .search-bar .date-picker-container,
-  .search-bar select,
-  .search-bar input {
-    /* 모바일에서는 검색 요소들이 더 넓게 표시되도록 함 */
-    width: 100%;
-    margin-bottom: 5px;
   }
 }
