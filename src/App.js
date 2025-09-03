@@ -53,13 +53,13 @@ function App() {
     }
   };
 
-  const handleFetchTrending = async () => {
-    // '더 보기' 로딩 상태를 true로, 일반 로딩 상태는 token이 없을 때만 true로 설정
+  const handleFetchTrending = async (token = null) => {
     if (token) {
       setLoadingMore(true);
     } else {
       setLoading(true);
-      setVideos([]); // 새로 검색할 때는 기존 목록 비우기
+      setVideos([]);
+      setNextPageToken(null); // 새로고침이므로 다음 페이지 토큰 초기화
     }
     setError(null);
 

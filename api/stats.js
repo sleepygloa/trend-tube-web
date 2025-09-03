@@ -2,8 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 
 // Supabase 클라이언트 초기화
 const supabase = createClient(
-  process.env.REACT_APP_SUPABASE_URL,
-  process.env.REACT_APP_SUPABASE_SERVICE_KEY
+  process.env._SUPABASE_URL,
+  process.env._SUPABASE_SERVICE_KEY
 );
 
 export default async function handler(req, res) {

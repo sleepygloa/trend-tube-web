@@ -3,14 +3,14 @@ import { google } from 'googleapis';
 
 // Supabase 클라이언트 초기화
 const supabase = createClient(
-  process.env.REACT_APP_SUPABASE_URL,
-  process.env.REACT_APP_SUPABASE_SERVICE_KEY
+  process.env._SUPABASE_URL,
+  process.env._SUPABASE_SERVICE_KEY
 );
 
 // YouTube API 클라이언트 초기화
 const youtube = google.youtube({
   version: 'v3',
-  auth: process.env.REACT_APP_YOUTUBE_API_KEY,
+  auth: process.env._YOUTUBE_API_KEY,
 });
 
 export default async function handler(req, res) {
