@@ -426,4 +426,22 @@ main p {
   to {
     transform: rotate(360deg);
   }
+}/* src/App.css 파일 맨 아래에 추가 */
+
+.load-more-button {
+  margin: 20px auto;
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: block;
+}
+
+.load-more-button:hover {
+  background-color: #0056b3;
 }

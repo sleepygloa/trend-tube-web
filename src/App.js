@@ -6,13 +6,17 @@ import VideoDetailModal from './components/VideoDetailModal';
 import FilterModal from './components/FilterModal';
 
 function App() {
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [isSplashVisible, setIsSplashVisible] = useState(true);
-  const [filterModalIsOpen, setFilterModalIsOpen] = useState(false);
+  const [videos, setVideos] = useState([]); // 동영상 목록 상태
+  const [loading, setLoading] = useState(false); // 로딩 상태
+  const [error, setError] = useState(null); // 에러 상태
+  const [modalIsOpen, setModalIsOpen] = useState(false); // 동영상 상세 모달 상태
+  const [selectedVideo, setSelectedVideo] = useState(null); // 선택된 동영상 상태
+  const [isSplashVisible, setIsSplashVisible] = useState(true); // 스플래시 화면 상태
+  const [filterModalIsOpen, setFilterModalIsOpen] = useState(false); // 필터 모달 상태
+
+  const [nextPageToken, setNextPageToken] = useState(null); // 다음 페이지 토큰을 저장할 상태
+  const [loadingMore, setLoadingMore] = useState(false); // '더 보기' 로딩 상태
+  
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -50,18 +54,34 @@ function App() {
   };
 
   const handleFetchTrending = async () => {
-    setLoading(true);
+    // '더 보기' 로딩 상태를 true로, 일반 로딩 상태는 token이 없을 때만 true로 설정
+    if (token) {
+      setLoadingMore(true);
+    } else {
+      setLoading(true);
+      setVideos([]); // 새로 검색할 때는 기존 목록 비우기
+    }
     setError(null);
-    setVideos([]);
+
     try {
-      const response = await axios.get('/api/trending');
-      // response.data가 배열인지 확인하고, 아니면 빈 배열로 처리
-      setVideos((response.data || []).map(formatVideoData));
+      // API 요청 시 pageToken을 파라미터로 함께 보냅니다.
+      const response = await axios.get('/api/trending', { params: { pageToken: token } });
+      
+      const formattedVideos = (response.data.items || []).map(formatVideoData);
+      
+      // 기존 목록 뒤에 새로운 목록을 이어붙입니다.
+      const newVideos = token ? [...videos, ...formattedVideos] : formattedVideos;
+
+      newVideos.sort((a, b) => b.viewCount - a.viewCount);
+      
+      setVideos(newVideos);
+      // API로부터 받은 다음 페이지 토큰을 저장합니다.
+      setNextPageToken(response.data.nextPageToken);
     } catch (err) {
       setError('실시간 인기 동영상을 불러오는 데 실패했습니다.');
-      console.error('Trending API error:', err);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -97,6 +117,25 @@ function App() {
           {loading ? <p>데이터를 불러오는 중입니다...</p> : 
             <VideoList videos={videos} onVideoSelect={openModal} />
           }
+          {/* VideoList와 '더 보기' 버튼 렌더링 */}
+          {!loading && (
+            <>
+              <VideoList videos={videos} onVideoSelect={openModal} />
+              
+              {/* 로딩 중이 아니고, 다음 페이지 토큰이 있을 때만 '더 보기' 버튼을 보여줌 */}
+              {!loadingMore && nextPageToken && (
+                <button 
+                  onClick={() => handleFetchTrending(nextPageToken)} 
+                  className="load-more-button"
+                >
+                  더 보기
+                </button>
+              )}
+
+              {/* '더 보기'가 로딩 중일 때 표시 */}
+              {loadingMore && <p>더 많은 영상을 불러오는 중입니다...</p>}
+            </>
+          )}
         </main>
       )}
       
