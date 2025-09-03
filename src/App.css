@@ -301,46 +301,17 @@ main p {
 /* ==========================================================================
    동영상 그리드 및 모달 스타일 (Video Grid & Modal Styles)
    ========================================================================== */
-.video-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+.my-masonry-grid {
+  display: -webkit-box; /* Not needed if autoprefixing */
+  display: -ms-flexbox; /* Not needed if autoprefixing */
+  display: flex;
+  margin-left: -20px; /* gutter size offset */
+  width: auto;
   padding: 20px;
 }
-.video-item {
-  display: flex;
-  flex-direction: column;
-  background-color: #ffffff;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-.video-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-}
-.video-item img {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-bottom: 1px solid #e9ecef;
-}
-.video-info {
-  padding: 15px;
-  flex-grow: 1;
-}
-.video-info h4 {
-  font-size: 1rem;
-  margin: 0 0 10px 0;
-  color: #212529;
-}
-.video-info p {
-  font-size: 0.85rem;
-  margin: 2px 0;
-  color: #6c757d;
+.my-masonry-grid_column {
+  padding-left: 20px; /* gutter size */
+  background-clip: padding-box;
 }
 
 .modal {

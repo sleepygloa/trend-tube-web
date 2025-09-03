@@ -40,11 +40,20 @@ function App() {
     setLoading(true);
     setError(null);
     setVideos([]);
+    setNextPageToken(null); // 새로운 검색이므로 토큰 초기화
     try {
-      // '/api/search'는 아직 없으므로, 임시로 '/api/trending'을 호출하도록 수정
-      // 나중에 '/api/search'를 만들면 이 부분만 교체하면 됩니다.
+      // 현재는 trending API를 사용하지만, search API도 동일한 구조로 응답하도록 만들어야 합니다.
       const response = await axios.get('/api/trending', { params: filters });
-      setVideos((response.data || []).map(formatVideoData));
+      
+      // 'items'를 추출하고, 없으면 빈 배열로 설정하는 로직 추가
+      const formattedVideos = (response.data.items || []).map(formatVideoData);
+      
+      // 검색 결과도 조회수 순으로 정렬 (선택사항)
+      formattedVideos.sort((a, b) => b.viewCount - a.viewCount);
+
+      setVideos(formattedVideos);
+      // 검색 결과에 대한 다음 페이지 토큰도 저장
+      setNextPageToken(response.data.nextPageToken);
     } catch (err) {
       setError('검색 데이터를 불러오는 데 실패했습니다.');
       console.error('Search API error:', err);
@@ -53,30 +62,43 @@ function App() {
     }
   };
 
+  
   const handleFetchTrending = async (token = null) => {
     if (token) {
       setLoadingMore(true);
     } else {
       setLoading(true);
       setVideos([]);
-      setNextPageToken(null); // 새로고침이므로 다음 페이지 토큰 초기화
+      setNextPageToken(null);
     }
     setError(null);
 
     try {
-      // API 요청 시 pageToken을 파라미터로 함께 보냅니다.
       const response = await axios.get('/api/trending', { params: { pageToken: token } });
-      
       const formattedVideos = (response.data.items || []).map(formatVideoData);
-      
-      // 기존 목록 뒤에 새로운 목록을 이어붙입니다.
-      const newVideos = token ? [...videos, ...formattedVideos] : formattedVideos;
+
+      let newVideos;
+      if (token) {
+        // --- 이 부분이 수정/추가되었습니다! ---
+        // 기존 비디오 ID 목록을 Set으로 만들어 빠른 조회를 가능하게 합니다.
+        const existingVideoIds = new Set(videos.map(v => v.id));
+        // 새로운 비디오 목록에서 이미 존재하는 ID는 필터링하여 제외합니다.
+        const uniqueNewVideos = formattedVideos.filter(v => !existingVideoIds.has(v.id));
+        newVideos = [...videos, ...uniqueNewVideos];
+      } else {
+        newVideos = formattedVideos;
+      }
 
       newVideos.sort((a, b) => b.viewCount - a.viewCount);
-      
+
       setVideos(newVideos);
-      // API로부터 받은 다음 페이지 토큰을 저장합니다.
       setNextPageToken(response.data.nextPageToken);
+
+      // 만약 더 이상 불러올 페이지가 없다면 '더 보기' 버튼이 사라집니다.
+      if (!response.data.nextPageToken && token) {
+        alert("마지막 페이지입니다.");
+      }
+
     } catch (err) {
       setError('실시간 인기 동영상을 불러오는 데 실패했습니다.');
     } finally {
@@ -114,15 +136,12 @@ function App() {
       {!isSplashVisible && (
         <main>
           {error && <p className="error-message">{error}</p>}
-          {loading ? <p>데이터를 불러오는 중입니다...</p> : 
-            <VideoList videos={videos} onVideoSelect={openModal} />
-          }
-          {/* VideoList와 '더 보기' 버튼 렌더링 */}
-          {!loading && (
+          {loading ? (
+            <p>데이터를 불러오는 중입니다...</p>
+          ) : (
             <>
               <VideoList videos={videos} onVideoSelect={openModal} />
               
-              {/* 로딩 중이 아니고, 다음 페이지 토큰이 있을 때만 '더 보기' 버튼을 보여줌 */}
               {!loadingMore && nextPageToken && (
                 <button 
                   onClick={() => handleFetchTrending(nextPageToken)} 
@@ -132,7 +151,6 @@ function App() {
                 </button>
               )}
 
-              {/* '더 보기'가 로딩 중일 때 표시 */}
               {loadingMore && <p>더 많은 영상을 불러오는 중입니다...</p>}
             </>
           )}
