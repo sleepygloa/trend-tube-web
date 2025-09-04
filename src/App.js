@@ -20,17 +20,24 @@ function App() {
   const [activeFilters, setActiveFilters] = useState(null);
   const [viewType, setViewType] = useState('grid');
   const [fabOpen, setFabOpen] = useState(false);
+  const [savedVideoIds, setSavedVideoIds] = useState(new Set());
 
+  // 컴포넌트가 처음 마운트될 때 카테고리와 저장된 영상 목록을 불러옵니다.
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchInitialData = async () => {
       try {
-        const response = await axios.get('/api/categories');
-        setCategories(response.data.filter(cat => cat.snippet.assignable));
+        // 카테고리 목록 가져오기
+        const catResponse = await axios.get('/api/categories');
+        setCategories(catResponse.data.filter(cat => cat.snippet.assignable));
+
+        // 저장된 비디오 ID 목록 가져오기
+        const savedResponse = await axios.get('/api/get-saved-videos');
+        setSavedVideoIds(new Set(savedResponse.data));
       } catch (error) {
-        console.error("카테고리 목록을 불러오는 데 실패했습니다.", error);
+        console.error("초기 데이터 로딩 실패:", error);
       }
     };
-    fetchCategories();
+    fetchInitialData();
   }, []);
 
   useEffect(() => {
@@ -61,8 +68,11 @@ function App() {
       channelTitle: video.snippet.channelTitle,
       thumbnail: video.snippet.thumbnails.medium.url,
       publishedAt: video.snippet.publishedAt,
+      description: video.snippet.description, // 영상 설명 추가
+      tags: video.snippet.tags,             // 영상 태그 추가
       viewCount: video.statistics?.viewCount,
       likeCount: video.statistics?.likeCount,
+      commentCount: video.statistics?.commentCount, // <-- 이 줄을 추가하세요
       duration: video.contentDetails ? formatDuration(video.contentDetails.duration) : null,
     }
   };
@@ -153,6 +163,25 @@ function App() {
     }
   };
 
+    // --- handleSave 함수를 App.js로 이동 ---
+  const handleSave = async (video) => {
+    try {
+      const videoData = {
+        video_id: video.id,
+        title: video.title,
+        channel_title: video.channelTitle,
+        thumbnail_url: video.thumbnail,
+      };
+      await axios.post('/api/save-video', videoData);
+      
+      // 저장 성공 시, savedVideoIds 상태를 업데이트하여 UI에 즉시 반영
+      setSavedVideoIds(prevIds => new Set(prevIds).add(video.id));
+      toast.success('영상이 내 목록에 저장되었습니다!');
+    } catch (err) {
+      toast.error('영상 저장에 실패했습니다.');
+    }
+  };
+
   const openModal = (video) => {
     setSelectedVideo(video);
     setModalIsOpen(true);
@@ -202,7 +231,14 @@ function App() {
             <p>데이터를 불러오는 중입니다...</p>
           ) : (
             <>
-              <VideoList videos={videos} onVideoSelect={openModal} viewType={viewType} />
+              {/* VideoList에 savedVideoIds와 handleSave 함수 전달 */}
+              <VideoList 
+                videos={videos} 
+                onVideoSelect={openModal} 
+                viewType={viewType}
+                savedVideoIds={savedVideoIds}
+                onSave={handleSave}
+              />
               {!loadingMore && nextPageToken && (
                 <button 
                   onClick={() => handleFetchTrending(nextPageToken)} 
@@ -238,10 +274,14 @@ function App() {
         </div>
       )}
       
+
+      {/* VideoDetailModal에 savedVideoIds와 handleSave 함수 전달 */}
       <VideoDetailModal
         modalIsOpen={modalIsOpen}
         closeModal={closeModal}
         videoData={selectedVideo}
+        isSaved={selectedVideo ? savedVideoIds.has(selectedVideo.id) : false}
+        onSave={handleSave}
       />
 
       <FilterModal

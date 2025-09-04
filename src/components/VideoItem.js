@@ -1,24 +1,11 @@
-// src/components/VideoItem.js
-
 import React from 'react';
-import axios from 'axios';
-import { toast } from 'react-hot-toast';
 
-function VideoItem({ video, onVideoSelect, viewType }) {
+function VideoItem({ video, onVideoSelect, viewType, isSaved, onSave }) {
 
-  const handleSave = async (e) => {
+  const handleSaveClick = (e) => {
     e.stopPropagation();
-    try {
-      const videoData = {
-        video_id: video.id,
-        title: video.title,
-        channel_title: video.channelTitle,
-        thumbnail_url: video.thumbnail,
-      };
-      await axios.post('/api/save-video', videoData);
-      toast.success('영상이 내 목록에 저장되었습니다!');
-    } catch (err) {
-      toast.error('영상 저장에 실패했습니다.');
+    if (!isSaved) { // 저장되지 않았을 때만 onSave 함수 호출
+      onSave(video);
     }
   };
   
@@ -26,17 +13,20 @@ function VideoItem({ video, onVideoSelect, viewType }) {
   if (viewType === 'list') {
     return (
       <div className="video-list-item" onClick={() => onVideoSelect(video)}>
-        <div className="list-item-checkbox" onClick={handleSave}>
-          <input type="checkbox" readOnly />
+        <div className="list-item-checkbox" onClick={handleSaveClick}>
+          <input type="checkbox" checked={isSaved} readOnly />
         </div>
-        <img src={video.thumbnail} alt={video.title} className="list-item-thumbnail" />
+        {/* 썸네일과 영상 시간을 감싸는 wrapper 추가 */}
+        <div className="video-player-wrapper">
+          <img src={video.thumbnail} alt={video.title} className="list-item-thumbnail" />
+          {video.duration && <span className="video-duration">{video.duration}</span>}
+        </div>
         <div className="list-item-info">
           <span className="list-item-title">{video.title}</span>
           <span className="list-item-channel">{video.channelTitle}</span>
         </div>
         <div className="list-item-meta">
-          <span className="meta-item">{video.id}</span>
-          <span className="meta-item">{video.duration}</span>
+          {/* 유튜브 ID 제거 */}
           <span className="meta-item">{video.viewCount ? `${Number(video.viewCount).toLocaleString()}회` : ''}</span>
         </div>
       </div>
@@ -55,7 +45,9 @@ function VideoItem({ video, onVideoSelect, viewType }) {
         <p>{video.channelTitle}</p>
         <div className="video-meta">
             {video.viewCount && <span className="view-count">조회수: {Number(video.viewCount).toLocaleString()}회</span>}
-            <button onClick={handleSave} className="save-button">저장</button>
+            <button onClick={handleSaveClick} className="save-button" disabled={isSaved}>
+              {isSaved ? '저장완료' : '저장'}
+            </button>
         </div>
       </div>
     </div>

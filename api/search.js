@@ -34,7 +34,7 @@ export default async function handler(req, res) {
 
     // 2. videos.list API로 검색된 영상들의 상세 정보(조회수 포함)를 한 번에 조회
     const videoResponse = await youtube.videos.list({
-      part: 'snippet,statistics,contentDetails',
+      part: 'snippet,statistics,contentDetails', // <-- contentDetails 추가
       id: videoIds,
     });
 

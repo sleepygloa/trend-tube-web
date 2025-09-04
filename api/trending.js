@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     const { pageToken } = req.query;
 
     const response = await youtube.videos.list({
-      part: 'snippet,statistics',
+      part: 'snippet,statistics,contentDetails', // <-- contentDetails 추가
       chart: 'mostPopular',
       regionCode: 'KR',
       maxResults: 20,
