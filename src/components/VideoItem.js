@@ -1,8 +1,10 @@
+// src/components/VideoItem.js
+
 import React from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
-function VideoItem({ video, onVideoSelect }) {
+function VideoItem({ video, onVideoSelect, viewType }) {
 
   const handleSave = async (e) => {
     e.stopPropagation();
@@ -20,9 +22,31 @@ function VideoItem({ video, onVideoSelect }) {
     }
   };
   
+  // --- List 뷰일 때의 렌더링 ---
+  if (viewType === 'list') {
+    return (
+      <div className="video-list-item" onClick={() => onVideoSelect(video)}>
+        <div className="list-item-checkbox" onClick={handleSave}>
+          <input type="checkbox" readOnly />
+        </div>
+        <img src={video.thumbnail} alt={video.title} className="list-item-thumbnail" />
+        <div className="list-item-info">
+          <span className="list-item-title">{video.title}</span>
+          <span className="list-item-channel">{video.channelTitle}</span>
+        </div>
+        <div className="list-item-meta">
+          <span className="meta-item">{video.id}</span>
+          <span className="meta-item">{video.duration}</span>
+          <span className="meta-item">{video.viewCount ? `${Number(video.viewCount).toLocaleString()}회` : ''}</span>
+        </div>
+      </div>
+    );
+  }
+
+  // --- Grid 또는 Masonry 뷰일 때의 렌더링 ---
   return (
-    <div className="video-item" onClick={() => onVideoSelect(video)}>
-      <div className="video-player-wrapper">
+    <div className="video-item">
+      <div className="video-player-wrapper" onClick={() => onVideoSelect(video)}>
         <img src={video.thumbnail} alt={video.title} />
         {video.duration && <span className="video-duration">{video.duration}</span>}
       </div>

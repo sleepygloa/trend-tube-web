@@ -1,3 +1,5 @@
+// src/components/VideoList.js
+
 import React from 'react';
 import Masonry from 'react-masonry-css';
 import VideoItem from './VideoItem';
@@ -14,6 +16,7 @@ function VideoList({ videos = [], onVideoSelect, viewType }) {
     500: 1
   };
 
+  // 'masonry' 뷰일 때 (기존 List 역할)
   if (viewType === 'masonry') {
     return (
       <Masonry
@@ -22,16 +25,17 @@ function VideoList({ videos = [], onVideoSelect, viewType }) {
         columnClassName="my-masonry-grid_column"
       >
         {videos.map(video => (
-          <VideoItem key={video.id + Math.random()} video={video} onVideoSelect={onVideoSelect} />
+          <VideoItem key={video.id + Math.random()} video={video} onVideoSelect={onVideoSelect} viewType={viewType} />
         ))}
       </Masonry>
     );
   }
 
+  // 'grid' 또는 'list' 뷰일 때
   return (
-    <div className="video-grid-table">
+    <div className={viewType === 'grid' ? 'video-grid-table' : 'video-list-table'}>
       {videos.map(video => (
-        <VideoItem key={video.id + Math.random()} video={video} onVideoSelect={onVideoSelect} />
+        <VideoItem key={video.id + Math.random()} video={video} onVideoSelect={onVideoSelect} viewType={viewType} />
       ))}
     </div>
   );

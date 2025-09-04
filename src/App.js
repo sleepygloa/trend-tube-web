@@ -223,7 +223,7 @@ function App() {
             <button onClick={() => { setViewType('grid'); setFabOpen(false); }} className="fab-action">
               Grid
             </button>
-            <button onClick={() => { setViewType('masonry'); setFabOpen(false); }} className="fab-action">
+            <button onClick={() => { setViewType('list'); setFabOpen(false); }} className="fab-action">
               List
             </button>
           </div>
