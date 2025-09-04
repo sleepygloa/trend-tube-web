@@ -30,13 +30,17 @@ body {
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 20px;
   transition: all 0.8s ease-in-out;
   position: sticky;
   top: 0;
   z-index: 100;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-left: auto;
 }
 
 .App-header.splash {
@@ -45,6 +49,7 @@ body {
   flex-direction: column;
   box-shadow: none;
   position: fixed;
+  cursor: pointer;
 }
 
 .App-header h1 {
@@ -64,6 +69,28 @@ body {
   margin-top: 10px;
 }
 
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-grow: 1;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.filter-tag {
+  background-color: #495057;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.filter-tag.trending {
+  background-color: #ff4757;
+}
+
 /* ==========================================================================
    메인 콘텐츠 스타일 (Main Content Styles)
    ========================================================================== */
@@ -80,59 +107,22 @@ main {
 
 main p {
   color: #555;
+  padding: 20px 0;
 }
 
 .error-message {
   color: #e03131;
-  padding: 20px;
-}
-
-.subscription-form-container {
-  padding: 30px;
-  background-color: #f1f3f5;
-  margin: 20px auto;
-  border-radius: 8px;
-  max-width: 800px;
-}
-
-.subscription-form-container h3 {
-  margin-top: 0;
-  color: #343a40;
-}
-
-.subscription-form-container form {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.subscription-form-container input {
-  height: 38px;
-  padding: 0 12px;
-  border: 1px solid #ced4da;
-  border-radius: 5px;
-  font-size: 0.95rem;
-  width: 250px;
 }
 
 /* ==========================================================================
-   검색 바 및 날짜 프리셋 버튼 스타일 (Search & Date Preset Styles)
+   버튼 스타일 (Button Styles)
    ========================================================================== */
-
-.filter-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-   
-/* 필터 버튼 (웹/모바일 헤더에 항상 표시) */
 .filter-button {
   height: 38px;
   padding: 0 20px;
-  border: 1px solid #17a2b8; /* 기간별 검색 버튼과 동일한 색상 */
   border-radius: 5px;
   background-color: #17a2b8;
+  border: 1px solid #17a2b8;
   color: white;
   font-size: 0.95rem;
   font-weight: bold;
@@ -144,313 +134,8 @@ main p {
   opacity: 0.9;
 }
 
-/* SearchBar 컴포넌트 전체에 대한 기본 스타일 (모달 내부에서 사용됨) */
-.search-bar {
-  display: flex;
-  flex-direction: column; /* 기본적으로 세로로 쌓이도록 */
-  align-items: stretch; /* 너비를 꽉 채우도록 */
-  gap: 15px;
-}
-
-/* SearchBar 내부 input, select, button 기본 스타일 */
-.search-bar input[type="text"],
-.search-bar select,
-.search-bar button,
-.react-datepicker-wrapper input {
-  height: 38px;
-  padding: 0 12px;
-  border: 1px solid #495057; /* 통일된 테두리 색상 */
-  border-radius: 5px;
-  background-color: white; /* 통일된 배경색 */
-  color: #495057; /* 통일된 글자색 */
-  font-size: 0.95rem;
-  width: 100%; /* 모달 안에서 항상 100% 너비 */
-}
-
-/* DatePicker input만 너비 조정 (모달 안에서도 100%를 따르지만, 여기서는 컨테이너에 의해 조정됨) */
-.react-datepicker-wrapper input {
-  width: auto; /* date-picker-container의 flex 아이템으로 동작 */
-}
-
-/* DatePicker 컨테이너 내부의 날짜 input */
-.search-bar .date-picker-container {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  /* 모달 내부에서 날짜 선택기가 전체 너비를 사용하도록 */
-  width: 100%; 
-  justify-content: space-between; /* ~ 기호 사이를 넓힘 */
-}
-
-.search-bar .date-picker-container .react-datepicker-wrapper {
-  flex-grow: 1; /* 날짜 입력 필드가 공간을 채우도록 */
-}
-
-.search-bar .date-picker-container span {
-  color: #ccc; /* ~ 기호 색상 */
-}
-
-.search-bar select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='18px' height='18px'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  background-size: 14px;
-  padding-right: 30px; /* 화살표가 텍스트를 가리지 않도록 */
-}
-
-.search-bar button {
-  font-weight: bold;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.search-bar button:hover:not(:disabled) {
-  opacity: 0.9;
-}
-
-.search-bar button[type="submit"] {
-  background-color: #17a2b8;
-  border-color: #17a2b8;
-  color: white;
-}
-
-.trending-button,
-.subscription-form-container button {
-  background-color: #dc3545;
-  border-color: #dc3545;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* 날짜 프리셋 버튼 (모달 내부에서 사용됨) */
-.date-preset-buttons {
-  display: flex;
-  justify-content: center; /* 모달 안에서 중앙 정렬 */
-  gap: 10px;
-  margin-top: 15px; /* 검색 버튼들과 간격 */
-  flex-wrap: wrap; /* 모바일에서 줄바꿈 허용 */
-}
-
-.date-preset-buttons button {
-  background-color: #6c757d; /* 회색 계열 */
-  border: 1px solid #6c757d;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 5px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  width: auto; /* 개별 버튼 너비는 내용에 맞게 */
-}
-
-.date-preset-buttons button:hover {
-  background-color: #5a6268;
-}
-
-/* ==========================================================================
-   DatePicker 커스텀 스타일 (DatePicker Custom Styles)
-   ========================================================================== */
-.react-datepicker-popper {
-  z-index: 101;
-}
-.react-datepicker {
-  font-family: inherit;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  color: #212529; /* 달력 숫자 및 요일 글자색 */
-}
-.react-datepicker__header {
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
-  padding-top: 10px; /* 상단 여백 추가 */
-}
-.react-datepicker__current-month,
-.react-datepicker__day-name {
-  color: #212529; /* 현재 월과 요일 이름 색상 */
-}
-.react-datepicker__day--today {
-  font-weight: bold;
-  background-color: #e9ecef;
-}
-.react-datepicker__day--selected,
-.react-datepicker__day--in-range,
-.react-datepicker__day--in-selecting-range {
-  background-color: #007bff;
-  color: white;
-  border-radius: 0.3rem;
-}
-.react-datepicker__day--keyboard-selected {
-  background-color: #dbeafe;
-}
-.react-datepicker__navigation {
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  height: 32px;
-  top: 7px;
-}
-.react-datepicker__navigation-icon::before {
-  border-color: #495057;
-  border-width: 2px 2px 0 0;
-}
-
-/* ==========================================================================
-   동영상 그리드 및 모달 스타일 (Video Grid & Modal Styles)
-   ========================================================================== */
-   
-/* --- 기존 .my-masonry-grid 관련 CSS는 그대로 둡니다 --- */
-.my-masonry-grid {
-  display: -webkit-box; /* Not needed if autoprefixing */
-  display: -ms-flexbox; /* Not needed if autoprefixing */
-  display: flex;
-  margin-left: -20px; /* gutter size offset */
-  width: auto;
-  padding: 20px; /* main 태그의 padding을 여기서 관리하도록 변경 */
-}
-.my-masonry-grid_column {
-  padding-left: 20px; /* gutter size */
-  background-clip: padding-box;
-}
-
-/* --- .video-item 스타일 수정 --- */
-.video-item {
-  background-color: #333;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  margin-bottom: 20px; /* Masonry가 아이템 사이의 수직 간격을 처리하도록 함 */
-  /* height: auto;  Masonry를 사용하므로 고정된 height를 제거합니다. */
-  /* width: 100%; Masonry 칼럼 내에서 100%를 차지하도록 함 */
-}
-
-.video-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-}
-
-.video-item img {
-  width: 100%;
-  height: auto; /* 이미지 높이가 내용에 맞춰 자동으로 조절되도록 */
-  display: block;
-}
-
-.video-item .video-info {
-  padding: 10px 15px;
-  color: white;
-}
-
-.video-item h4 {
-  font-size: 1rem;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  line-height: 1.4;
-  height: 2.8em; /* 두 줄까지 표시하고 넘치면 ... 처리 (제목 길이에 따라 유동적 높이 가능) */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.video-item p {
-  font-size: 0.85rem;
-  color: #ccc;
-  margin-bottom: 3px;
-}
-
-.modal {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 500px;
-  color: #212529;
-  border: 1px solid #dee2e6;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: 200;
-}
-.close-button { /* 구독 폼 닫기 버튼 */
-  background-color: #6c757d;
-  border-color: #6c757d;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 10px 20px; /* 버튼 패딩 추가 */
-  border-radius: 5px; /* 버튼 모서리 둥글게 */
-}
-.close-button-modal { /* 필터 모달 닫기 버튼 (X 아이콘) */
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #6c757d; /* 아이콘 색상 조정 */
-  transition: color 0.2s;
-}
-.close-button-modal:hover {
-  color: #343a40;
-}
-
-/* ==========================================================================
-   반응형 디자인 (Responsive Design)
-   ========================================================================== */
-
-/* 웹/모바일 모두 '필터' 버튼만 보이도록 데스크톱용 검색 바 숨김 */
-.desktop-search-bar {
-  display: none;
-}
-
-/* 필터 버튼은 항상 보임 */
-.filter-button {
-  display: block; /* 항상 블록 요소로 표시 */
-}
-
-/* @media (max-width: 768px) { ... }는 더 이상 필요 없습니다.
-   이제 웹/모바일 모두 동일하게 '필터' 버튼이 보이고 모달이 열립니다. */
-
-
-/* ==========================================================================
-   Create React App 기본 스타일 (Default CRA Styles) - 선택사항
-   ========================================================================== */
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}/* src/App.css 파일 맨 아래에 추가 */
-
 .load-more-button {
-  margin: 20px auto;
+  margin: 20px auto 40px;
   padding: 12px 30px;
   font-size: 1rem;
   font-weight: bold;
@@ -459,15 +144,240 @@ main p {
   border: none;
   border-radius: 50px;
   cursor: pointer;
+}
+
+.search-button {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  height: 40px;
+  border-radius: 5px;
+}
+
+.trending-button {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  height: 40px;
+  border-radius: 5px;
+}
+
+/* ==========================================================================
+   필터 모달 및 검색 바 스타일 (Filter Modal & Search Bar Styles)
+   ========================================================================== */
+.modal .search-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 24px;
+  text-align: left;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.search-bar input[type="text"],
+.search-bar select,
+.react-datepicker-wrapper input {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #212529;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.search-bar input[type="text"]:focus,
+.search-bar select:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.date-picker-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.date-picker-container span {
+  color: #6c757d;
+}
+
+.search-type-selector {
+  display: flex;
+  width: 100%;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.search-type-selector button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background-color: #f8f9fa;
+  color: #495057;
+  cursor: pointer;
+  font-weight: 500;
   transition: background-color 0.2s;
-  display: block;
 }
 
-.load-more-button:hover {
-  background-color: #0056b3;
+.search-type-selector button.active {
+  background-color: #007bff;
+  color: white;
 }
 
-/* --- VideoItem 미리보기 플레이어 스타일 --- */
+.search-type-selector button:first-child {
+  border-right: 1px solid #ced4da;
+}
+
+.date-preset-buttons,
+.duration-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.date-preset-buttons button,
+.duration-buttons button {
+  background-color: #f1f3f5;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  padding: 8px 14px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.date-preset-buttons button:hover,
+.duration-buttons button:hover {
+  background-color: #e9ecef;
+}
+
+.duration-buttons button.active {
+  background-color: #212529;
+  color: white;
+  border-color: #212529;
+}
+
+.form-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* ==========================================================================
+   DatePicker 커스텀 스타일 (DatePicker Custom Styles)
+   ========================================================================== */
+.react-datepicker-popper {
+  z-index: 101;
+}
+
+.react-datepicker {
+  font-family: inherit;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: #212529;
+}
+
+.react-datepicker__header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  padding-top: 10px;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  color: #212529;
+}
+
+.react-datepicker__day--today {
+  font-weight: bold;
+  background-color: #e9ecef;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--in-range,
+.react-datepicker__day--in-selecting-range {
+  background-color: #007bff;
+  color: white;
+  border-radius: 0.3rem;
+}
+
+.react-datepicker__day--keyboard-selected {
+  background-color: #dbeafe;
+}
+
+.react-datepicker__navigation {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  height: 32px;
+  top: 7px;
+}
+
+.react-datepicker__navigation-icon::before {
+  border-color: #495057;
+  border-width: 2px 2px 0 0;
+}
+
+/* ==========================================================================
+   동영상 그리드 스타일 (Video Grid Styles)
+   ========================================================================== */
+.my-masonry-grid {
+  display: flex;
+  margin-left: -20px;
+  width: auto;
+  padding: 20px;
+}
+
+.my-masonry-grid_column {
+  padding-left: 20px;
+  background-clip: padding-box;
+}
+
+.video-grid-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.video-item {
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.video-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
 .video-player-wrapper {
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -482,27 +392,129 @@ main p {
   object-fit: cover;
 }
 
-/* ReactPlayer가 wrapper 내부에 꽉 차도록 설정 */
 .video-player-wrapper .react-player {
   position: absolute;
   top: 0;
   left: 0;
 }
 
-/* --- 비디오 재생 모달 스타일 --- */
+.video-info {
+  padding: 15px;
+  text-align: left;
+}
+
+.video-info h4 {
+  font-size: 1rem;
+  margin: 0 0 10px 0;
+  color: #212529;
+  height: 2.8em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.video-info p {
+  font-size: 0.85rem;
+  margin: 2px 0;
+  padding: 0;
+  color: #6c757d;
+}
+
+.video-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.view-count {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.save-button {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  font-size: 0.75rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.video-duration {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   모달 스타일 (Modal Styles)
+   ========================================================================== */
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  color: #212529;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 200;
+}
+
+.filter-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.close-button-modal {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #adb5bd;
+  position: absolute;
+  top: 15px;
+  right: 20px;
+}
+
 .video-player-modal {
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
-  width: 90vw; /* 화면 너비의 90% */
+  width: 90vw;
   max-width: 1280px;
   height: auto;
-  overflow: visible; /* 닫기 버튼이 보일 수 있도록 */
+  overflow: visible;
 }
 
 .player-wrapper {
   position: relative;
-  padding-top: 56.25%; /* 16:9 비율 유지를 위한 트릭 */
+  padding-top: 56.25%;
 }
 
 .react-player-main {
@@ -513,7 +525,7 @@ main p {
 
 .close-button-player {
   position: absolute;
-  top: -45px; /* 비디오 플레이어 위쪽으로 이동 */
+  top: -45px;
   right: 0;
   background: none;
   border: none;
@@ -521,4 +533,162 @@ main p {
   color: white;
   cursor: pointer;
   text-shadow: 0 0 5px black;
+}
+
+/* ==========================================================================
+   플로팅 액션 버튼 (FAB) 스타일
+   ========================================================================== */
+.fab-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.fab {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #E91E63;
+  color: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  font-size: 2rem;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28), background-color 0.3s;
+  order: 2;
+}
+
+.fab:hover {
+  background-color: #C2185B;
+  transform: scale(1.1);
+}
+
+.fab.rotate {
+  transform: rotate(45deg);
+}
+
+.fab.rotate:hover {
+  transform: rotate(45deg) scale(1.1);
+}
+
+.fab-actions {
+  display: flex;
+  gap: 15px;
+  order: 1;
+}
+
+.fab-action {
+  padding: 8px 16px;
+  border-radius: 50px;
+  background-color: #ffffff;
+  color: #333;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.2s ease-out;
+  visibility: hidden;
+}
+
+.fab-actions.open .fab-action {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+/* ==========================================================================
+   반응형 디자인 (Responsive Design)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .App-header {
+    flex-wrap: nowrap;
+    gap: 10px;
+  }
+  .App-header h1 {
+    font-size: 1.2rem;
+  }
+}
+
+
+/* ==========================================================================
+   List 뷰 스타일 (List View Styles)
+   ========================================================================== */
+
+.video-list-table {
+  display: flex;
+  flex-direction: column;
+  gap: 1px; /* 아이템 사이의 얇은 구분선 역할 */
+  background-color: #dee2e6; /* 구분선 색상 */
+  border: 1px solid #dee2e6;
+  margin: 20px;
+}
+
+.video-list-item {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 10px;
+  gap: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.video-list-item:hover {
+  background-color: #f8f9fa;
+}
+
+.list-item-checkbox {
+  padding: 5px;
+}
+
+.list-item-thumbnail {
+  width: 120px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.list-item-info {
+  flex-grow: 1;
+  text-align: left;
+  overflow: hidden;
+}
+
+.list-item-title {
+  display: block;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #212529;
+}
+
+.list-item-channel {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.list-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 0.85rem;
+  color: #495057;
+  white-space: nowrap; /* 메타 정보가 줄바꿈되지 않도록 */
+}
+
+/* 반응형: 모바일에서 메타 정보 일부 숨기기 */
+@media (max-width: 768px) {
+  .list-item-meta .meta-item:first-child { /* 유튜브 ID 숨기기 */
+    display: none;
+  }
 }

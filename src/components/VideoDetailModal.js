@@ -5,17 +5,22 @@ import ReactPlayer from 'react-player';
 Modal.setAppElement('#root');
 
 function VideoDetailModal({ modalIsOpen, closeModal, videoData }) {
-  if (!videoData) return null;
+  // videoData가 없으면 아무것도 렌더링하지 않음
+  if (!videoData) {
+    return null;
+  }
+  
+  // console.log는 테스트 후 지우는 것이 좋습니다.
+  // console.log('모달이 렌더링되었습니다:', videoData);
 
   return (
     <Modal
       isOpen={modalIsOpen}
-      onRequestClose={closeModal}
+      onRequestClose={closeModal} // 이제 닫기 함수를 직접 사용
       contentLabel="Video Player"
-      className="modal video-player-modal" // 비디오용 클래스 추가
+      className="modal video-player-modal"
       overlayClassName="overlay"
     >
-      {/* 닫기 버튼을 모달 바깥쪽에 배치 */}
       <button onClick={closeModal} className="close-button-player">X</button>
       <div className="player-wrapper">
         <ReactPlayer
@@ -23,8 +28,8 @@ function VideoDetailModal({ modalIsOpen, closeModal, videoData }) {
           url={`https://www.youtube.com/watch?v=${videoData.id}`}
           width="100%"
           height="100%"
-          playing={true}   // 모달이 열리면 바로 재생
-          controls={true}  // 재생/정지 등 컨트롤 바 표시
+          playing={false} // 자동 재생 비활성화
+          controls={true} // 사용자가 직접 재생하도록 컨트롤 바 표시
         />
       </div>
     </Modal>

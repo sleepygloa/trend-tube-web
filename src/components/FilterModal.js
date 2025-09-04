@@ -1,16 +1,16 @@
 import React from 'react';
 import Modal from 'react-modal';
-import SearchBar from './SearchBar'; // 기존 SearchBar를 재사용합니다.
+import SearchBar from './SearchBar';
 
 Modal.setAppElement('#root');
 
-function FilterModal({ modalIsOpen, closeModal, onSearch, onFetchTrending, isLoading }) {
+function FilterModal({ modalIsOpen, closeModal, onSearch, onFetchTrending, isLoading, categories }) {
   return (
     <Modal
       isOpen={modalIsOpen}
       onRequestClose={closeModal}
       contentLabel="Filter Options"
-      className="modal" // 기존 모달 스타일을 재사용합니다.
+      className="modal"
       overlayClassName="overlay"
     >
       <div className="filter-modal-header">
@@ -21,6 +21,7 @@ function FilterModal({ modalIsOpen, closeModal, onSearch, onFetchTrending, isLoa
         onSearch={onSearch}
         onFetchTrending={onFetchTrending}
         isLoading={isLoading}
+        categories={categories}
       />
     </Modal>
   );
