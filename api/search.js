@@ -6,15 +6,9 @@ const youtube = google.youtube({
 });
 
 export default async function handler(req, res) {
-  console.log('Search API called with query:', req.query);
-  console.log('Using API Key:', process.env.YOUTUBE_API_KEY ? 'Yes' : 'No');
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
   try {
-    const { keyword, duration, categoryId, pageToken } = req.query;
+    const { keyword, duration, categoryId, pageToken, order, publishedAfter } = req.query;
 
-    // 1. search.list API로 조건에 맞는 영상 ID 목록 검색
     const searchResponse = await youtube.search.list({
       part: 'id,snippet',
       q: keyword || '',
@@ -24,6 +18,8 @@ export default async function handler(req, res) {
       pageToken: pageToken || undefined,
       videoDuration: duration || 'any',
       videoCategoryId: categoryId || undefined,
+      order: order || 'relevance', // 정렬 기준 추가
+      publishedAfter: publishedAfter || undefined, // 업로드 날짜 필터 추가
     });
 
     const videoIds = searchResponse.data.items.map(item => item.id.videoId).join(',');

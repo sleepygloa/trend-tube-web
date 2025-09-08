@@ -600,6 +600,16 @@ main p {
   .App-header h1 {
     font-size: 1.2rem;
   }
+  /* --- 이 부분이 추가/수정되었습니다! --- */
+  /* 모바일에서 버튼 텍스트 숨기기 */
+  .button-text {
+    display: none;
+  }
+  /* 모바일에서 버튼 여백 조정 */
+  .auth-button,
+  .filter-button {
+    padding: 0 10px; /* 아이콘만 있을 때 여백 줄이기 */
+  }
 }
 
 
@@ -866,28 +876,34 @@ main p {
 /* src/App.css 파일 맨 아래에 추가 */
 
 /* --- 인증 버튼 스타일 --- */
-.auth-button {
+/* 인증 버튼과 필터 버튼에 공통 스타일 적용 */
+.auth-button,
+.filter-button {
   height: 38px;
-  padding: 0 20px;
+  padding: 0 15px; /* 좌우 여백 조정 */
   border-radius: 5px;
-  border: none;
+  border: 1px solid transparent;
   color: white;
   font-size: 0.95rem;
   font-weight: bold;
   cursor: pointer;
   transition: opacity 0.2s;
+  
+  /* 아이콘과 텍스트를 나란히 정렬 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
-
+.filter-button {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+}
 .auth-button.login {
-  background-color: #4285F4; /* 구글 파란색 */
+  background-color: #4285F4;
 }
-
 .auth-button.logout {
-  background-color: #6c757d; /* 회색 */
-}
-
-.auth-button:hover {
-  opacity: 0.9;
+  background-color: #6c757d;
 }
 
 /* src/App.css 파일 맨 아래에 추가 */
@@ -914,4 +930,25 @@ main p {
 }
 .view-selector button:first-child {
   border-right: 1px solid #dee2e6;
+}
+
+/* src/App.css */
+.button-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.button-group button {
+  background-color: #f1f3f5;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  padding: 8px 14px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.button-group button.active {
+  background-color: #212529;
+  color: white;
+  border-color: #212529;
 }

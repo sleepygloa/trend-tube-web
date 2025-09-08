@@ -9,12 +9,12 @@ const youtube = google.youtube({
 export default async function handler(req, res) {
   try {
     // 프론트엔드에서 보낸 pageToken 값을 받습니다.
-    const { pageToken } = req.query;
+    const { pageToken, regionCode } = req.query;
 
     const response = await youtube.videos.list({
       part: 'snippet,statistics,contentDetails', // <-- contentDetails 추가
       chart: 'mostPopular',
-      regionCode: 'KR',
+      regionCode: regionCode || 'KR',
       maxResults: 20,
       pageToken: pageToken || undefined, // pageToken이 있으면 사용하고, 없으면 사용하지 않음
     });
