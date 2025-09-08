@@ -113,26 +113,35 @@ function App() {
 
   // '상세 검색' 실행
   const handleSearch = async (filters, token = null) => {
-    if (token) setLoadingMore(true);
-    else { setLoading(true); setVideos([]); setNextPageToken(null); }
+    if (token) {
+      setLoadingMore(true);
+    } else {
+      setLoading(true);
+      setVideos([]);
+      setNextPageToken(null);
+    }
     setError(null);
 
     try {
-      let params = { 
-        keyword: filters.keyword,
-        categoryId: filters.categoryId,
-        pageToken: token,
-      };
-
-      if (filters.searchType === 'date') {
-        alert('기간별 검색은 현재 지원되지 않습니다. 대신 길이별 검색을 이용해주세요.');
-        setLoading(false); setLoadingMore(false);
-        return;
-      } else {
-        params.duration = filters.duration;
-        params.keyword = filters.keyword || '';
+      let publishedAfter = null;
+      if (filters.published && filters.published !== 'all') {
+        const now = new Date();
+        if (filters.published === 'hour') publishedAfter = new Date(now.setHours(now.getHours() - 1)).toISOString();
+        if (filters.published === 'today') publishedAfter = new Date(now.setHours(0, 0, 0, 0)).toISOString();
+        if (filters.published === 'week') publishedAfter = new Date(now.setDate(now.getDate() - 7)).toISOString();
+        if (filters.published === 'month') publishedAfter = new Date(now.setMonth(now.getMonth() - 1)).toISOString();
+        if (filters.published === 'year') publishedAfter = new Date(now.setFullYear(now.getFullYear() - 1)).toISOString();
       }
-
+      
+      const params = { 
+        keyword: filters.keyword || '',
+        order: filters.order,
+        duration: filters.duration,
+        publishedAfter,
+        regionCode: filters.regionCode,
+        pageToken: token, // pageToken을 filters에서가 아닌, 함수의 두 번째 인자(token)에서 받음
+      };
+      
       const response = await axios.get('/api/search', { params });
       
       const formattedVideos = (response.data.items || []).map(formatVideoData);
@@ -140,11 +149,15 @@ function App() {
       
       setVideos(newVideos);
       setNextPageToken(response.data.nextPageToken);
-      setActiveFilters({ type: 'search', ...filters });
+
+      if (!token) {
+        setActiveFilters({ type: 'search', ...filters });
+      }
     } catch (err) {
       toast.error('검색 데이터를 불러오는 데 실패했습니다.');
     } finally {
-      setLoading(false); setLoadingMore(false);
+      setLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -312,8 +325,18 @@ function App() {
                   session={session}
                 />
               )}
-              {currentView === 'trending' && !loadingMore && nextPageToken && (
-                <button onClick={() => handleFetchTrending(activeFilters, nextPageToken)} className="load-more-button">
+              {/* '더 보기' 버튼이 handleSearch를 호출하도록 수정 */}
+              {!loadingMore && nextPageToken && (
+                <button 
+                  onClick={() => {
+                    if (activeFilters.type === 'trending') {
+                      handleFetchTrending(activeFilters, nextPageToken);
+                    } else {
+                      handleSearch(activeFilters, nextPageToken);
+                    }
+                  }} 
+                  className="load-more-button"
+                >
                   더 보기
                 </button>
               )}
