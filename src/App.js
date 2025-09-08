@@ -77,6 +77,43 @@ function App() {
     return () => clearTimeout(timer);
   }, []); // 이 useEffect는 앱이 처음 실행될 때 단 한 번만 실행됨
 
+
+  // --- 이 부분이 수정되었습니다! ---
+  // 4. '내 보관함' 뷰가 선택되었을 때, 그리고 로그인 되었을 때만 데이터를 불러옵니다.
+  useEffect(() => {
+    const fetchSavedVideos = async () => {
+      if (!session) {
+        toast.error("저장된 영상을 보려면 로그인이 필요합니다.");
+        return;
+      }
+      setLoading(true);
+      setError(null);
+      try {
+        const { data } = await axios.get('/api/get-my-videos', {
+          headers: { Authorization: `Bearer ${session.access_token}` }
+        });
+        const formattedData = data.map(item => ({
+          id: item.video_id,
+          title: item.title,
+          channelTitle: item.channel_title,
+          thumbnail: item.thumbnail_url,
+          publishedAt: item.created_at,
+          viewCount: null, likeCount: null, duration: null,
+        }));
+        setSavedVideos(formattedData);
+      } catch(error) {
+        toast.error("저장된 영상을 불러오지 못했습니다.");
+        console.error("fetchSavedVideos error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (currentView === 'saved') {
+      fetchSavedVideos();
+    }
+  }, [currentView, session]); // currentView 또는 session이 변경될 때 이 효과를 재실행합니다.
+
   // --- 데이터 처리 함수 ---
 
   // 유튜브 API 응답을 프론트엔드에서 사용하기 쉬운 형태로 변환
@@ -197,31 +234,6 @@ function App() {
     }
   };
 
-  // '내 보관함' 목록 불러오기
-  const fetchSavedVideos = async () => {
-    if (!session) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const { data } = await axios.get('/api/get-my-videos', {
-        headers: { Authorization: `Bearer ${session.access_token}` }
-      });
-      const formattedData = data.map(item => ({
-        id: item.video_id,
-        title: item.title,
-        channelTitle: item.channel_title,
-        thumbnail: item.thumbnail_url,
-        publishedAt: item.created_at,
-        // DB 데이터에는 없는 정보는 null로 처리
-        viewCount: null, likeCount: null, duration: null,
-      }));
-      setSavedVideos(formattedData);
-    } catch(error) {
-      toast.error("저장된 영상을 불러오지 못했습니다.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // '저장' 버튼 클릭
   const handleSave = async (video) => {
@@ -299,7 +311,7 @@ function App() {
           {session && (
             <div className="view-selector">
               <button onClick={() => setCurrentView('trending')} className={currentView === 'trending' ? 'active' : ''}>실시간 인기</button>
-              <button onClick={() => { setCurrentView('saved'); fetchSavedVideos(); }} className={currentView === 'saved' ? 'active' : ''}>내 보관함</button>
+              <button onClick={() => setCurrentView('saved')} className={currentView === 'saved' ? 'active' : ''}>내 보관함</button>
             </div>
           )}
           

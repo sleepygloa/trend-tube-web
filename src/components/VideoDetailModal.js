@@ -5,30 +5,42 @@ import axios from 'axios';
 
 Modal.setAppElement('#root');
 
+// --- 이 함수가 추가되었습니다! ---
+// ISO 날짜 문자열을 "5분 전", "3일 전" 등으로 변환하는 함수
+function formatRelativeTime(dateString) {
+  const date = new Date(dateString);
+  const now = new Date();
+  const seconds = Math.round((now - date) / 1000);
+  const minutes = Math.round(seconds / 60);
+  const hours = Math.round(minutes / 60);
+  const days = Math.round(hours / 24);
+  const weeks = Math.round(days / 7);
+  const months = Math.round(days / 30);
+  const years = Math.round(days / 365);
+
+  if (seconds < 60) return ` 방금 전`;
+  if (minutes < 60) return ` ${minutes}분 전`;
+  if (hours < 24) return ` ${hours}시간 전`;
+  if (days < 7) return ` ${days}일 전`;
+  if (weeks < 5) return ` ${weeks}주 전`;
+  if (months < 12) return ` ${months}개월 전`;
+  return ` ${years}년 전`;
+}
+
 function VideoDetailModal({ modalIsOpen, closeModal, videoData, isSaved, onSave, session }) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [comments, setComments] = useState([]);
   const [loadingComments, setLoadingComments] = useState(false);
   const [commentNextPageToken, setCommentNextPageToken] = useState(null);
+  const [memo, setMemo] = useState('');
 
-  // --- 이 부분이 추가되었습니다! ---
-  const [memo, setMemo] = useState(''); // 메모 입력을 위한 상태
-
-  // 댓글을 불러오는 함수 (이제 '더보기'도 처리)
   const fetchComments = async (token = null) => {
-    // '더보기'가 아닐 경우(첫 로딩), 기존 댓글 초기화
-    if (!token) {
-      setComments([]);
-    }
+    if (!token) setComments([]);
     setLoadingComments(true);
     try {
       const response = await axios.get(`/api/comments`, { 
-        params: { 
-          videoId: videoData.id, 
-          pageToken: token || undefined 
-        }
+        params: { videoId: videoData.id, pageToken: token || undefined }
       });
-      // '더보기'일 경우 기존 댓글 뒤에 새 댓글을 이어붙임
       const newComments = token ? [...comments, ...response.data.items] : response.data.items;
       setComments(newComments);
       setCommentNextPageToken(response.data.nextPageToken);
@@ -42,14 +54,14 @@ function VideoDetailModal({ modalIsOpen, closeModal, videoData, isSaved, onSave,
   useEffect(() => {
     if (modalIsOpen && videoData?.id) {
       fetchComments();
-      setMemo(''); // 모달이 열릴 때마다 메모 초기화
+      setMemo('');
+      setIsDescriptionExpanded(false);
     }
   }, [modalIsOpen, videoData]);
 
   if (!videoData) return null;
 
-  const handleSaveClick = (e) => {
-    e.stopPropagation();
+  const handleSaveClick = () => {
     if (!isSaved) {
       onSave(videoData, memo);
     }
@@ -90,11 +102,9 @@ function VideoDetailModal({ modalIsOpen, closeModal, videoData, isSaved, onSave,
           <h3>{videoData.title}</h3>
           <div className="detail-meta">
             <span>{videoData.channelTitle}</span>
-            <span>조회수 {Number(videoData.viewCount).toLocaleString()}회</span>
+            <span>조회수 {Number(videoData.viewCount || 0).toLocaleString()}회</span>
           </div>
-
           
-          {/* --- 저장 섹션이 수정되었습니다! --- */}
           {session && (
             <div className="save-section">
               <textarea 
@@ -113,9 +123,8 @@ function VideoDetailModal({ modalIsOpen, closeModal, videoData, isSaved, onSave,
           <div className="detail-card">
             <h4>영상 정보</h4>
             <ul>
-              {/* 좋아요 수가 없거나 NaN일 경우 0으로 표시 */}
               <li><strong>좋아요:</strong> {Number(videoData.likeCount || 0).toLocaleString()}</li>
-              <li><strong>영상 길이:</strong> {videoData.duration}</li>
+              <li><strong>영상 길이:</strong> {videoData.duration || '정보 없음'}</li>
               <li><strong>게시일:</strong> {new Date(videoData.publishedAt).toLocaleDateString()}</li>
             </ul>
           </div>
@@ -136,24 +145,31 @@ function VideoDetailModal({ modalIsOpen, closeModal, videoData, isSaved, onSave,
             />
           </div>
 
-          {/* --- 댓글 UI 중복을 제거하고 하나로 합쳤습니다 --- */}
           <div className="detail-card">
             <h4>댓글 ({Number(videoData.commentCount || 0).toLocaleString()})</h4>
             {loadingComments && comments.length === 0 ? <p>댓글을 불러오는 중...</p> : (
               <ul className="comment-list">
-                {comments.length > 0 ? comments.map(comment => (
-                  <li key={comment.id} className="comment-item">
-                    <img src={comment.snippet.topLevelComment.snippet.authorProfileImageUrl} alt="profile" />
-                    <div className="comment-content">
-                      <strong>{comment.snippet.topLevelComment.snippet.authorDisplayName}</strong>
-                      <p dangerouslySetInnerHTML={{ __html: comment.snippet.topLevelComment.snippet.textDisplay }} />
-                    </div>
-                  </li>
-                )) : <p>댓글이 없습니다.</p>}
+                {comments.length > 0 ? comments.map(comment => {
+                  const commentSnippet = comment.snippet.topLevelComment.snippet;
+                  return (
+                    <li key={comment.id} className="comment-item">
+                      <img src={commentSnippet.authorProfileImageUrl} alt="profile" />
+                      <div className="comment-content">
+                        <div className="comment-author">
+                          <strong>{commentSnippet.authorDisplayName}</strong>
+                          {/* --- 이 부분이 추가되었습니다! --- */}
+                          <span className="comment-timestamp">
+                            {formatRelativeTime(commentSnippet.publishedAt)}
+                          </span>
+                        </div>
+                        <p dangerouslySetInnerHTML={{ __html: commentSnippet.textDisplay }} />
+                      </div>
+                    </li>
+                  )
+                }) : <p>댓글이 없습니다.</p>}
               </ul>
             )}
             
-            {/* '댓글 더보기' 버튼 */}
             {loadingComments && comments.length > 0 && <p>댓글을 더 불러오는 중...</p>}
             {!loadingComments && commentNextPageToken && (
               <button onClick={() => fetchComments(commentNextPageToken)} className="load-more-comments-button">
@@ -168,3 +184,4 @@ function VideoDetailModal({ modalIsOpen, closeModal, videoData, isSaved, onSave,
 }
 
 export default VideoDetailModal;
+

@@ -4,7 +4,7 @@ import React from 'react';
 import Masonry from 'react-masonry-css';
 import VideoItem from './VideoItem';
 
-function VideoList({ videos = [], onVideoSelect, viewType }) {
+function VideoList({ videos = [], onVideoSelect, viewType, savedVideoIds, onSave, session }) {
   if (videos.length === 0) {
     return <p>검색 결과가 없습니다. 필터 조건을 변경하거나 '실시간 인기' 버튼을 눌러 확인하세요.</p>;
   }
@@ -25,7 +25,15 @@ function VideoList({ videos = [], onVideoSelect, viewType }) {
         columnClassName="my-masonry-grid_column"
       >
         {videos.map(video => (
-          <VideoItem key={video.id + Math.random()} video={video} onVideoSelect={onVideoSelect} viewType={viewType} />
+          <VideoItem 
+            key={video.id + Math.random()} 
+            video={video} 
+            onVideoSelect={onVideoSelect} 
+            viewType={viewType}
+            isSaved={savedVideoIds.has(video.id)}
+            onSave={onSave} // onSave 함수를 VideoItem에 전달
+            session={session} // session 정보를 VideoItem에 전달 
+          />
         ))}
       </Masonry>
     );
@@ -35,7 +43,15 @@ function VideoList({ videos = [], onVideoSelect, viewType }) {
   return (
     <div className={viewType === 'grid' ? 'video-grid-table' : 'video-list-table'}>
       {videos.map(video => (
-        <VideoItem key={video.id + Math.random()} video={video} onVideoSelect={onVideoSelect} viewType={viewType} />
+        <VideoItem 
+            key={video.id + Math.random()} 
+            video={video} 
+            onVideoSelect={onVideoSelect} 
+            viewType={viewType}
+            isSaved={savedVideoIds.has(video.id)}
+            onSave={onSave} // onSave 함수를 VideoItem에 전달
+            session={session} // session 정보를 VideoItem에 전달 
+        />
       ))}
     </div>
   );
