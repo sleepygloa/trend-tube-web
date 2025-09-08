@@ -862,3 +862,56 @@ main p {
 .load-more-comments-button:hover {
   background-color: #ced4da;
 }
+
+/* src/App.css 파일 맨 아래에 추가 */
+
+/* --- 인증 버튼 스타일 --- */
+.auth-button {
+  height: 38px;
+  padding: 0 20px;
+  border-radius: 5px;
+  border: none;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.auth-button.login {
+  background-color: #4285F4; /* 구글 파란색 */
+}
+
+.auth-button.logout {
+  background-color: #6c757d; /* 회색 */
+}
+
+.auth-button:hover {
+  opacity: 0.9;
+}
+
+/* src/App.css 파일 맨 아래에 추가 */
+
+.view-selector {
+  margin: 20px auto;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  overflow: hidden;
+  display: inline-flex;
+}
+.view-selector button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #f8f9fa;
+  color: #495057;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+.view-selector button.active {
+  background-color: #007bff;
+  color: white;
+}
+.view-selector button:first-child {
+  border-right: 1px solid #dee2e6;
+}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { supabase } from './supabaseClient'; // 방금 만든 Supabase 클라이언트 import
 import './App.css';
 import VideoList from './components/VideoList';
 import VideoDetailModal from './components/VideoDetailModal';
@@ -21,6 +22,23 @@ function App() {
   const [viewType, setViewType] = useState('grid');
   const [fabOpen, setFabOpen] = useState(false);
   const [savedVideoIds, setSavedVideoIds] = useState(new Set());
+  const [session, setSession] = useState(null); // 로그인 세션 상태
+  const [currentView, setCurrentView] = useState('trending');
+  const [savedVideos, setSavedVideos] = useState([]);
+
+
+  // 앱이 시작될 때와 인증 상태가 변할 때 세션을 업데이트합니다.
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // 컴포넌트가 처음 마운트될 때 카테고리와 저장된 영상 목록을 불러옵니다.
   useEffect(() => {
@@ -43,7 +61,7 @@ function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsSplashVisible(false);
-      handleFetchTrending();
+//      handleFetchTrending();
     }, 2500);
     return () => clearTimeout(timer);
   }, []);
@@ -163,6 +181,35 @@ function App() {
     }
   };
 
+
+  // '내 보관함' 영상을 불러오는 함수
+  const fetchSavedVideos = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await axios.get('/api/get-my-videos');
+      
+      // DB 데이터를 프론트엔드 형식에 맞게 변환
+      const formattedData = data.map(item => ({
+        id: item.video_id,
+        title: item.title,
+        channelTitle: item.channel_title,
+        thumbnail: item.thumbnail_url,
+        // DB에 없는 정보는 null 또는 기본값 처리
+        publishedAt: item.created_at, 
+        viewCount: null,
+        likeCount: null,
+        duration: null,
+      }));
+      setSavedVideos(formattedData);
+
+    } catch(error) {
+      toast.error("저장된 영상을 불러오지 못했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
     // --- handleSave 함수를 App.js로 이동 ---
   const handleSave = async (video) => {
     try {
@@ -192,6 +239,22 @@ function App() {
     setSelectedVideo(null);
   };
 
+
+  // --- 이 함수들이 추가되었습니다! ---
+  // Google 로그인 함수
+  const handleGoogleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+    });
+    if (error) toast.error('로그인 중 오류가 발생했습니다.');
+  };
+
+  // 로그아웃 함수
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) toast.error('로그아웃 중 오류가 발생했습니다.');
+  };
+
   return (
     <div className={`App ${isSplashVisible ? 'splash-active' : ''}`}>
       <header 
@@ -213,6 +276,15 @@ function App() {
                 </>
               )}
             </div>
+
+            {/* --- 이 부분이 수정되었습니다! --- */}
+            {/* 로그인 상태에 따라 다른 버튼을 보여줍니다. */}
+            {session ? (
+              <button onClick={handleLogout} className="auth-button logout">로그아웃</button>
+            ) : (
+              <button onClick={handleGoogleLogin} className="auth-button login">로그인</button>
+            )}
+
             <button 
               className="filter-button" 
               onClick={() => setFilterModalIsOpen(true)}
@@ -226,26 +298,46 @@ function App() {
       
       {!isSplashVisible && (
         <main>
+
+          {session && (
+            <div className="view-selector">
+              <button onClick={() => setCurrentView('trending')} className={currentView === 'trending' ? 'active' : ''}>실시간 인기</button>
+              <button onClick={() => { setCurrentView('saved'); fetchSavedVideos(); }} className={currentView === 'saved' ? 'active' : ''}>내 보관함</button>
+            </div>
+          )}
+
           {error && <p className="error-message">{error}</p>}
           {loading ? (
             <p>데이터를 불러오는 중입니다...</p>
           ) : (
             <>
-              {/* VideoList에 savedVideoIds와 handleSave 함수 전달 */}
-              <VideoList 
-                videos={videos} 
-                onVideoSelect={openModal} 
-                viewType={viewType}
-                savedVideoIds={savedVideoIds}
-                onSave={handleSave}
-              />
-              {!loadingMore && nextPageToken && (
-                <button 
-                  onClick={() => handleFetchTrending(nextPageToken)} 
-                  className="load-more-button"
-                >
-                  더 보기
-                </button>
+              {currentView === 'trending' ? (
+                <>
+                  {/* VideoList에 savedVideoIds와 handleSave 함수 전달 */}
+                  <VideoList 
+                    videos={videos} 
+                    onVideoSelect={openModal} 
+                    viewType={viewType}
+                    savedVideoIds={savedVideoIds}
+                    onSave={handleSave}
+                  />
+                  {!loadingMore && nextPageToken && (
+                    <button 
+                      onClick={() => handleFetchTrending(nextPageToken)} 
+                      className="load-more-button"
+                    >
+                      더 보기
+                    </button>
+                  )}
+                </>
+              ) : (
+                  <VideoList 
+                    videos={savedVideos} 
+                    onVideoSelect={openModal} 
+                    viewType={viewType}
+                    savedVideoIds={savedVideoIds}
+                    onSave={handleSave}
+                  />
               )}
               {loadingMore && <p>더 많은 영상을 불러오는 중입니다...</p>}
             </>
