@@ -952,3 +952,24 @@ main p {
   color: white;
   border-color: #212529;
 }
+
+/* src/App.css 파일에 추가 */
+.keyword-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.keyword-input-group input {
+  flex-grow: 1; /* 입력창이 남는 공간을 모두 차지하도록 */
+}
+
+.shorts-tag-button {
+  flex-shrink: 0; /* 버튼 크기가 줄어들지 않도록 */
+  padding: 0 15px;
+  background-color: #e9ecef;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}

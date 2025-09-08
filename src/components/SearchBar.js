@@ -1,25 +1,27 @@
 import React, { useState } from 'react';
-import DatePicker from 'react-datepicker'; // DatePicker는 이제 사용하지 않으므로 삭제해도 됩니다.
 import "react-datepicker/dist/react-datepicker.css";
 
 function SearchBar({ onSearch, onFetchTrending, isLoading, categories = [] }) {
   const [searchType, setSearchType] = useState('trending'); // 'trending' 또는 'search'
   
   // Trending 상태
-  const [regionCode, setRegionCode] = useState('KR');
+  const [trendingRegion, setTrendingRegion] = useState('KR');
   const [trendingCategory, setTrendingCategory] = useState('');
 
   // Search 상태
-  const [keyword, setKeyword] = useState('');
-  const [order, setOrder] = useState('relevance');
-  const [published, setPublished] = useState('all');
-  const [duration, setDuration] = useState('any');
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [searchOrder, setSearchOrder] = useState('relevance');
+  const [searchPublished, setSearchPublished] = useState('all');
+  const [searchDuration, setSearchDuration] = useState('any');
+  const [searchRegion, setSearchRegion] = useState('KR'); // 상세 검색용 국가 상태 추가
 
   // --- 데이터 목록 ---
   const regionOptions = [
     { value: 'KR', label: '한국 🇰🇷' },
     { value: 'US', label: '미국 🇺🇸' },
     { value: 'JP', label: '일본 🇯🇵' },
+    { value: 'VN', label: '베트남 🇻🇳' },
+    { value: 'IN', label: '인도 🇮🇳' },
   ];
   const orderOptions = [
     { value: 'relevance', label: '관련성' },
@@ -44,9 +46,22 @@ function SearchBar({ onSearch, onFetchTrending, isLoading, categories = [] }) {
 
   const handleApply = () => {
     if (searchType === 'trending') {
-      onFetchTrending({ regionCode, categoryId: trendingCategory });
+      onFetchTrending({ regionCode: trendingRegion, categoryId: trendingCategory });
     } else {
-      onSearch({ keyword, order, published, duration });
+      onSearch({ 
+        keyword: searchKeyword, 
+        order: searchOrder, 
+        published: searchPublished, 
+        duration: searchDuration,
+        regionCode: searchRegion, // 국가 코드 전달
+      });
+    }
+  };
+  
+  // #shorts 태그를 키워드에 추가하는 함수
+  const addShortsTag = () => {
+    if (!searchKeyword.includes('#shorts')) {
+      setSearchKeyword(prev => (prev ? `${prev} #shorts` : '#shorts').trim());
     }
   };
 
@@ -62,7 +77,7 @@ function SearchBar({ onSearch, onFetchTrending, isLoading, categories = [] }) {
           <div className="form-group">
             <label>국가 선택</label>
             <div className="button-group">
-              {regionOptions.map(opt => <button type="button" key={opt.value} className={regionCode === opt.value ? 'active' : ''} onClick={() => setRegionCode(opt.value)}>{opt.label}</button>)}
+              {regionOptions.map(opt => <button type="button" key={opt.value} className={trendingRegion === opt.value ? 'active' : ''} onClick={() => setTrendingRegion(opt.value)}>{opt.label}</button>)}
             </div>
           </div>
           <div className="form-group">
@@ -77,24 +92,34 @@ function SearchBar({ onSearch, onFetchTrending, isLoading, categories = [] }) {
         <>
           <div className="form-group">
             <label htmlFor="keyword-input">키워드</label>
-            <input id="keyword-input" type="text" value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder="검색어 입력" />
+            <div className="keyword-input-group">
+              <input id="keyword-input" type="text" value={searchKeyword} onChange={(e) => setSearchKeyword(e.target.value)} placeholder="검색어 입력" />
+              <button type="button" onClick={addShortsTag} className="shorts-tag-button">#shorts</button>
+            </div>
+          </div>
+          {/* 상세 검색에도 국가 선택 기능 추가 */}
+          <div className="form-group">
+            <label>국가 선택</label>
+            <div className="button-group">
+              {regionOptions.map(opt => <button type="button" key={opt.value} className={searchRegion === opt.value ? 'active' : ''} onClick={() => setSearchRegion(opt.value)}>{opt.label}</button>)}
+            </div>
           </div>
           <div className="form-group">
             <label>정렬 기준</label>
             <div className="button-group">
-              {orderOptions.map(opt => <button type="button" key={opt.value} className={order === opt.value ? 'active' : ''} onClick={() => setOrder(opt.value)}>{opt.label}</button>)}
+              {orderOptions.map(opt => <button type="button" key={opt.value} className={searchOrder === opt.value ? 'active' : ''} onClick={() => setSearchOrder(opt.value)}>{opt.label}</button>)}
             </div>
           </div>
           <div className="form-group">
             <label>업로드 날짜</label>
             <div className="button-group">
-              {publishedOptions.map(opt => <button type="button" key={opt.value} className={published === opt.value ? 'active' : ''} onClick={() => setPublished(opt.value)}>{opt.label}</button>)}
+              {publishedOptions.map(opt => <button type="button" key={opt.value} className={searchPublished === opt.value ? 'active' : ''} onClick={() => setSearchPublished(opt.value)}>{opt.label}</button>)}
             </div>
           </div>
           <div className="form-group">
             <label>영상 길이</label>
             <div className="button-group">
-              {durationOptions.map(opt => <button type="button" key={opt.value} className={duration === opt.value ? 'active' : ''} onClick={() => setDuration(opt.value)}>{opt.label}</button>)}
+              {durationOptions.map(opt => <button type="button" key={opt.value} className={searchDuration === opt.value ? 'active' : ''} onClick={() => setSearchDuration(opt.value)}>{opt.label}</button>)}
             </div>
           </div>
         </>

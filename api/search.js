@@ -7,13 +7,13 @@ const youtube = google.youtube({
 
 export default async function handler(req, res) {
   try {
-    const { keyword, duration, categoryId, pageToken, order, publishedAfter } = req.query;
+    const { keyword, duration, categoryId, pageToken, order, publishedAfter, regionCode } = req.query;
 
     const searchResponse = await youtube.search.list({
       part: 'id,snippet',
       q: keyword || '',
       type: 'video',
-      regionCode: 'KR',
+      regionCode: regionCode || 'KR',
       maxResults: 20,
       pageToken: pageToken || undefined,
       videoDuration: duration || 'any',
