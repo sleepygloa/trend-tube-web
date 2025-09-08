@@ -1,4 +1,3 @@
-// /api/save-video.js
 import { createClient } from '@supabase/supabase-js';
 
 export default async function handler(req, res) {
@@ -8,10 +7,9 @@ export default async function handler(req, res) {
   try {
     const { videoData, accessToken } = req.body;
     
-    // 요청에 포함된 access token으로 사용자 권한을 가진 Supabase 클라이언트를 생성
     const supabase = createClient(
       process.env.SUPABASE_URL, 
-      process.env.SUPABASE_ANON_KEY, // 서비스 키가 아닌 anon 키 사용
+      process.env.SUPABASE_ANON_KEY,
       { global: { headers: { Authorization: `Bearer ${accessToken}` } } }
     );
       
@@ -23,7 +21,9 @@ export default async function handler(req, res) {
           video_id: videoData.video_id, 
           title: videoData.title, 
           channel_title: videoData.channel_title, 
-          thumbnail_url: videoData.thumbnail_url 
+          thumbnail_url: videoData.thumbnail_url,
+          memo: videoData.memo, // memo 데이터 추가
+          tags: videoData.tags, // tags 데이터 추가
         }
       ]);
       

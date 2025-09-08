@@ -11,6 +11,9 @@ function VideoDetailModal({ modalIsOpen, closeModal, videoData, isSaved, onSave,
   const [loadingComments, setLoadingComments] = useState(false);
   const [commentNextPageToken, setCommentNextPageToken] = useState(null);
 
+  // --- 이 부분이 추가되었습니다! ---
+  const [memo, setMemo] = useState(''); // 메모 입력을 위한 상태
+
   // 댓글을 불러오는 함수 (이제 '더보기'도 처리)
   const fetchComments = async (token = null) => {
     // '더보기'가 아닐 경우(첫 로딩), 기존 댓글 초기화
@@ -36,10 +39,10 @@ function VideoDetailModal({ modalIsOpen, closeModal, videoData, isSaved, onSave,
     }
   };
 
-  // 모달이 열리고 videoData가 바뀔 때마다 첫 댓글 목록을 불러옵니다.
   useEffect(() => {
     if (modalIsOpen && videoData?.id) {
-      fetchComments(); // 중복 로직을 제거하고, 통합된 fetchComments 함수를 호출합니다.
+      fetchComments();
+      setMemo(''); // 모달이 열릴 때마다 메모 초기화
     }
   }, [modalIsOpen, videoData]);
 
@@ -48,7 +51,7 @@ function VideoDetailModal({ modalIsOpen, closeModal, videoData, isSaved, onSave,
   const handleSaveClick = (e) => {
     e.stopPropagation();
     if (!isSaved) {
-      onSave(videoData);
+      onSave(videoData, memo);
     }
   };
 
@@ -89,11 +92,22 @@ function VideoDetailModal({ modalIsOpen, closeModal, videoData, isSaved, onSave,
             <span>{videoData.channelTitle}</span>
             <span>조회수 {Number(videoData.viewCount).toLocaleString()}회</span>
           </div>
-          {/* session이 존재할 때만 버튼을 렌더링합니다. */}
+
+          
+          {/* --- 저장 섹션이 수정되었습니다! --- */}
           {session && (
-            <button onClick={handleSaveClick} className="save-button-large" disabled={isSaved}>
-              {isSaved ? '저장 완료됨' : '이 영상 저장하기'}
-            </button>
+            <div className="save-section">
+              <textarea 
+                className="memo-input"
+                placeholder="이 영상에 대한 아이디어나 메모를 남겨보세요..."
+                value={memo}
+                onChange={(e) => setMemo(e.target.value)}
+                disabled={isSaved}
+              />
+              <button onClick={handleSaveClick} className="save-button-large" disabled={isSaved}>
+                {isSaved ? '저장 완료됨' : '내 보관함에 저장'}
+              </button>
+            </div>
           )}
           
           <div className="detail-card">

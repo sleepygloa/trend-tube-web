@@ -7,6 +7,8 @@ import VideoDetailModal from './components/VideoDetailModal';
 import FilterModal from './components/FilterModal';
 import { Toaster, toast } from 'react-hot-toast';
 import { FiLogOut, FiFilter } from 'react-icons/fi';
+import SavedVideoList from './components/SavedVideoList'; // 새로 만든 컴포넌트 import
+
 
 function App() {
   // --- 상태 관리 (State Management) ---
@@ -316,13 +318,10 @@ function App() {
                   session={session}
                 />
               ) : (
-                <VideoList 
-                  videos={savedVideos} 
-                  onVideoSelect={openModal} 
-                  viewType={viewType}
-                  savedVideoIds={savedVideoIds}
-                  onSave={handleSave}
-                  session={session}
+                <SavedVideoList 
+                  savedVideos={savedVideos} 
+                  onVideoSelect={openModal}
+                  session={session} 
                 />
               )}
               {/* '더 보기' 버튼이 handleSearch를 호출하도록 수정 */}
