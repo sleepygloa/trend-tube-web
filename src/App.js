@@ -184,10 +184,16 @@ function App() {
 
   // '내 보관함' 영상을 불러오는 함수
   const fetchSavedVideos = async () => {
+    if (!session) return;
     setLoading(true);
     setError(null);
     try {
-      const { data } = await axios.get('/api/get-my-videos');
+      // API 요청 헤더에 accessToken을 담아 보냄
+      const { data } = await axios.get('/api/get-my-videos', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
       
       // DB 데이터를 프론트엔드 형식에 맞게 변환
       const formattedData = data.map(item => ({
@@ -210,8 +216,12 @@ function App() {
     }
   };
 
-    // --- handleSave 함수를 App.js로 이동 ---
+  // --- handleSave 함수를 수정 ---
   const handleSave = async (video) => {
+    if (!session) {
+      toast.error('로그인이 필요합니다.');
+      return;
+    }
     try {
       const videoData = {
         video_id: video.id,
@@ -219,11 +229,14 @@ function App() {
         channel_title: video.channelTitle,
         thumbnail_url: video.thumbnail,
       };
-      await axios.post('/api/save-video', videoData);
+      // API 요청 시 accessToken을 함께 보냄
+      await axios.post('/api/save-video', { 
+        videoData, 
+        accessToken: session.access_token 
+      });
       
-      // 저장 성공 시, savedVideoIds 상태를 업데이트하여 UI에 즉시 반영
       setSavedVideoIds(prevIds => new Set(prevIds).add(video.id));
-      toast.success('영상이 내 목록에 저장되었습니다!');
+      toast.success('영상이 내 보관함에 저장되었습니다!');
     } catch (err) {
       toast.error('영상 저장에 실패했습니다.');
     }
@@ -320,15 +333,8 @@ function App() {
                     viewType={viewType}
                     savedVideoIds={savedVideoIds}
                     onSave={handleSave}
+                    session={session} // session 전달
                   />
-                  {!loadingMore && nextPageToken && (
-                    <button 
-                      onClick={() => handleFetchTrending(nextPageToken)} 
-                      className="load-more-button"
-                    >
-                      더 보기
-                    </button>
-                  )}
                 </>
               ) : (
                   <VideoList 
@@ -337,7 +343,14 @@ function App() {
                     viewType={viewType}
                     savedVideoIds={savedVideoIds}
                     onSave={handleSave}
+                    session={session} // session 전달
                   />
+              )}
+              {/* '더 보기' 버튼 (trending 뷰일 때만) */}
+              {currentView === 'trending' && !loadingMore && nextPageToken && (
+                <button onClick={() => handleFetchTrending(nextPageToken)} className="load-more-button">
+                  더 보기
+                </button>
               )}
               {loadingMore && <p>더 많은 영상을 불러오는 중입니다...</p>}
             </>
@@ -374,6 +387,7 @@ function App() {
         videoData={selectedVideo}
         isSaved={selectedVideo ? savedVideoIds.has(selectedVideo.id) : false}
         onSave={handleSave}
+        session={session} // session 전달
       />
 
       <FilterModal

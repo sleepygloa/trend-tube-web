@@ -1,6 +1,7 @@
 import React from 'react';
 
-function VideoItem({ video, onVideoSelect, viewType, isSaved, onSave }) {
+function VideoItem({ video, onVideoSelect, viewType, isSaved, onSave, session }) {
+
 
   const handleSaveClick = (e) => {
     e.stopPropagation();
@@ -45,9 +46,11 @@ function VideoItem({ video, onVideoSelect, viewType, isSaved, onSave }) {
         <p>{video.channelTitle}</p>
         <div className="video-meta">
             {video.viewCount && <span className="view-count">조회수: {Number(video.viewCount).toLocaleString()}회</span>}
-            <button onClick={handleSaveClick} className="save-button" disabled={isSaved}>
-              {isSaved ? '저장완료' : '저장'}
-            </button>
+            {session && (
+              <button onClick={handleSaveClick} className="save-button" disabled={isSaved}>
+                {isSaved ? '저장완료' : '저장'}
+              </button>
+            )}
         </div>
       </div>
     </div>

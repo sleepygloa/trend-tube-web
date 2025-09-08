@@ -5,7 +5,7 @@ import axios from 'axios';
 
 Modal.setAppElement('#root');
 
-function VideoDetailModal({ modalIsOpen, closeModal, videoData, isSaved, onSave }) {
+function VideoDetailModal({ modalIsOpen, closeModal, videoData, isSaved, onSave, session }) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [comments, setComments] = useState([]);
   const [loadingComments, setLoadingComments] = useState(false);
@@ -89,9 +89,12 @@ function VideoDetailModal({ modalIsOpen, closeModal, videoData, isSaved, onSave 
             <span>{videoData.channelTitle}</span>
             <span>조회수 {Number(videoData.viewCount).toLocaleString()}회</span>
           </div>
-          <button onClick={handleSaveClick} className="save-button-large" disabled={isSaved}>
-            {isSaved ? '저장 완료됨' : '이 영상 저장하기'}
-          </button>
+          {/* session이 존재할 때만 버튼을 렌더링합니다. */}
+          {session && (
+            <button onClick={handleSaveClick} className="save-button-large" disabled={isSaved}>
+              {isSaved ? '저장 완료됨' : '이 영상 저장하기'}
+            </button>
+          )}
           
           <div className="detail-card">
             <h4>영상 정보</h4>
